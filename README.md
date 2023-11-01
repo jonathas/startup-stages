@@ -66,7 +66,26 @@ The [husky](https://www.npmjs.com/package/husky) lib is used for enforcing some 
 
 The diagram below is parsed via [mermaid](https://mermaid.js.org/syntax/entityRelationshipDiagram.html).
 
-TBD
+```mermaid
+erDiagram
+  phases ||--o{ tasks : contains
+
+  phases {
+    id int
+    order int
+    title varchar(255)
+    created_at timestamp
+    updated_at timestamp
+  }
+  tasks {
+    id int
+    title varchar(255)
+    is_done boolean
+    phase_id int
+    created_at timestamp
+    updated_at timestamp
+  }
+```
 
 ## Postman collection
 
@@ -75,3 +94,4 @@ A [Postman](https://www.postman.com/downloads/) collection can be found inside o
 ## Known limitations
 
 - The progress is currently only saved in memory (not database)
+- 
