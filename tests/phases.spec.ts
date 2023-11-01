@@ -2,6 +2,7 @@
 import { PhaseDTO } from '../src/dto/phase.dto';
 import { PhaseModel } from '../src/models/phase.model';
 import { PhasesService } from '../src/services/phases.service';
+import { TasksService } from '../src/services/tasks.service';
 
 describe('# Phases', () => {
   const phase: PhaseDTO = {
@@ -75,5 +76,29 @@ describe('# Phases', () => {
     phasesService.delete(res.id);
 
     expect(phasesService.findAll().length).toBe(0);
+  });
+
+  it('should be considered as done when all tasks are done', () => {
+    createdPhase = phasesService.create(phase);
+    const task = {
+      title: 'Setup virtual office',
+      isDone: true,
+      phaseId: createdPhase.id
+    };
+    const task2 = {
+      title: 'Set mission & vision',
+      isDone: true,
+      phaseId: createdPhase.id
+    };
+
+    const tasksService = new TasksService();
+
+    const taskModel = tasksService.create(task);
+    const taskModel2 = tasksService.create(task2);
+
+    expect(phasesService.isPhaseDone(createdPhase.id)).toBe(true);
+
+    tasksService.delete(taskModel.id);
+    tasksService.delete(taskModel2.id);
   });
 });

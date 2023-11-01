@@ -26,10 +26,7 @@ export class TasksService {
   }
 
   public update(id: string, input: TaskDTO) {
-    const task = this.taskModel.find(id);
-    if (!task) {
-      throw new Error('Task not found');
-    }
+    const task = this.find(id);
 
     const data = { ...task, ...input } as TaskModel;
     this.taskModel.update(id, data);

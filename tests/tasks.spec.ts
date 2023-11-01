@@ -11,6 +11,10 @@ describe('# Tasks', () => {
     order: 1,
     title: 'Foundation'
   };
+  const secondPhase: PhaseDTO = {
+    order: 2,
+    title: 'Discovery'
+  };
   const task: Partial<TaskDTO> = {
     title: 'Setup virtual office',
     isDone: false
@@ -22,8 +26,8 @@ describe('# Tasks', () => {
 
   let phasesService: PhasesService;
   let tasksService: TasksService;
-  let createdPhase: PhaseModel;
-  let createdTask: TaskModel;
+  let createdPhases: PhaseModel[] = [];
+  let createdTasks: TaskModel[] = [];
 
   beforeEach(() => {
     phasesService = new PhasesService();
@@ -31,20 +35,23 @@ describe('# Tasks', () => {
   });
 
   afterEach(() => {
-    phasesService.delete(createdPhase.id);
-    tasksService.delete(createdTask.id);
+    createdPhases.forEach((p) => phasesService.delete(p.id));
+    createdTasks.forEach((t) => tasksService.delete(t.id));
+
+    createdPhases = [];
+    createdTasks = [];
   });
 
   it('should be possible to create a task', () => {
-    createdPhase = phasesService.create(phase);
-    task.phaseId = createdPhase.id;
+    createdPhases.push(phasesService.create(phase));
+    task.phaseId = createdPhases[0].id;
 
-    createdTask = tasksService.create(task as TaskDTO);
+    createdTasks.push(tasksService.create(task as TaskDTO));
 
-    expect(createdTask.id).not.toBeUndefined();
-    expect(createdTask.title).toBe('Setup virtual office');
-    expect(createdTask.isDone).toBe(false);
-    expect(createdTask.phaseId).toBe(createdPhase.id);
+    expect(createdTasks[0].id).not.toBeUndefined();
+    expect(createdTasks[0].title).toBe('Setup virtual office');
+    expect(createdTasks[0].isDone).toBe(false);
+    expect(createdTasks[0].phaseId).toBe(createdPhases[0].id);
   });
 
   it('should not be possible to create a task without a phase', () => {
@@ -52,31 +59,31 @@ describe('# Tasks', () => {
   });
 
   it('should be possible to find a task', () => {
-    createdPhase = phasesService.create(phase);
-    task.phaseId = createdPhase.id;
+    createdPhases.push(phasesService.create(phase));
+    task.phaseId = createdPhases[0].id;
 
-    createdTask = tasksService.create(task as TaskDTO);
-    const found = tasksService.find(createdTask.id);
+    createdTasks.push(tasksService.create(task as TaskDTO));
+    const found = tasksService.find(createdTasks[0].id);
 
     expect(found).not.toBeUndefined();
-    expect(found.id).toBe(createdTask.id);
+    expect(found.id).toBe(createdTasks[0].id);
     expect(found.title).toBe('Setup virtual office');
     expect(found.isDone).toBe(false);
-    expect(found.phaseId).toBe(createdPhase.id);
+    expect(found.phaseId).toBe(createdPhases[0].id);
   });
 
   it('should be possible to update a task', () => {
-    createdPhase = phasesService.create(phase);
-    task.phaseId = createdPhase.id;
+    createdPhases.push(phasesService.create(phase));
+    task.phaseId = createdPhases[0].id;
 
-    createdTask = tasksService.create(task as TaskDTO);
-    const updated = tasksService.update(createdTask.id, newTask as TaskDTO);
+    createdTasks.push(tasksService.create(task as TaskDTO));
+    const updated = tasksService.update(createdTasks[0].id, newTask as TaskDTO);
 
     expect(updated).not.toBeUndefined();
-    expect(updated.id).toBe(createdTask.id);
+    expect(updated.id).toBe(createdTasks[0].id);
     expect(updated.title).toBe('Setup virtual office today');
     expect(updated.isDone).toBe(true);
-    expect(updated.phaseId).toBe(createdPhase.id);
+    expect(updated.phaseId).toBe(createdPhases[0].id);
   });
 
   it('should not be possible to update a task if it does not exist', () => {
@@ -84,26 +91,26 @@ describe('# Tasks', () => {
   });
 
   it('should be possible to find all tasks', () => {
-    createdPhase = phasesService.create(phase);
-    task.phaseId = createdPhase.id;
+    createdPhases.push(phasesService.create(phase));
+    task.phaseId = createdPhases[0].id;
 
-    createdTask = tasksService.create(task as TaskDTO);
-    const secondTask = tasksService.create({ ...newTask, phaseId: createdPhase.id } as TaskDTO);
+    createdTasks.push(tasksService.create(task as TaskDTO));
+    const secondTask = tasksService.create({ ...newTask, phaseId: createdPhases[0].id } as TaskDTO);
     const found = tasksService.findAll();
 
     expect(found).not.toBeUndefined();
     expect(found).toHaveLength(2);
-    expect(found[0].id).toBe(createdTask.id);
+    expect(found[0].id).toBe(createdTasks[0].id);
     expect(found[0].title).toBe('Setup virtual office');
     expect(found[0].isDone).toBe(false);
-    expect(found[0].phaseId).toBe(createdPhase.id);
+    expect(found[0].phaseId).toBe(createdPhases[0].id);
 
     tasksService.delete(secondTask.id);
   });
 
   it('should be possible to delete a task', () => {
-    createdPhase = phasesService.create(phase);
-    task.phaseId = createdPhase.id;
+    createdPhases.push(phasesService.create(phase));
+    task.phaseId = createdPhases[0].id;
 
     const res = tasksService.create(task as TaskDTO);
     tasksService.delete(res.id);
@@ -111,8 +118,74 @@ describe('# Tasks', () => {
     expect(() => tasksService.find(res.id)).toThrow('Task not found');
   });
 
-  /*
-    it.skip('should not complete a task if all tasks in the previous 
-    phase are not completed', () => {});
-  */
+  it('should not complete a task if any task in the previous phase is not completed', () => {
+    createdPhases.push(phasesService.create(phase));
+    task.phaseId = createdPhases[0].id;
+
+    createdTasks.push(tasksService.create(task as TaskDTO)); // isDone = false
+
+    newTask.phaseId = createdPhases[0].id;
+    createdTasks.push(tasksService.create(newTask as TaskDTO)); // isDone = true
+
+    // Meaning that not all tasks in the Foundation phase are completed
+
+    createdPhases.push(phasesService.create(secondPhase));
+
+    /**
+     * Third task cannot be created as done, since at least one of the tasks in the previous
+     * phase is not done
+     */
+    expect(() =>
+      tasksService.create({ ...newTask, phaseId: createdPhases[1].id } as TaskDTO)
+    ).toThrow('Tasks from the previous phase are not completed');
+
+    // If it is created as not done, it should work
+    const res = tasksService.create({
+      ...newTask,
+      phaseId: createdPhases[1].id,
+      isDone: false
+    } as TaskDTO);
+
+    expect(res).not.toBeUndefined();
+    expect(res.id).not.toBeUndefined();
+    expect(res.isDone).toBe(false);
+
+    // But then if we try to update it as done, it should not work
+    expect(() => tasksService.update(res.id, { ...newTask, isDone: true } as TaskDTO)).toThrow(
+      'Tasks from the previous phase are not completed'
+    );
+  });
+
+  it('should set a task to not done only if all tasks in the next phase are not done', () => {
+    createdPhases.push(phasesService.create(phase));
+    task.phaseId = createdPhases[0].id;
+
+    createdTasks.push(tasksService.create({ ...task, isDone: true } as TaskDTO));
+
+    newTask.phaseId = createdPhases[0].id;
+    createdTasks.push(tasksService.create(newTask as TaskDTO)); // isDone = true
+
+    // Meaning that all tasks in the Foundation phase are completed
+
+    createdPhases.push(phasesService.create(secondPhase));
+
+    // The first task in the second phase is also done
+    const thirdTask = tasksService.create({
+      ...newTask,
+      phaseId: createdPhases[1].id,
+      isDone: true
+    } as TaskDTO);
+
+    // If we try to set any task in the previous phase to not done, it should not work
+    expect(() =>
+      tasksService.update(createdTasks[1].id, { ...task, isDone: false } as TaskDTO)
+    ).toThrow('Tasks from the next phase are already completed');
+
+    // If we try to set any task in the current task to not done, it should work
+    createdTasks.push(tasksService.update(thirdTask.id, { ...newTask, isDone: false } as TaskDTO));
+
+    expect(createdTasks[2]).not.toBeUndefined();
+    expect(createdTasks[2].id).toBe(thirdTask.id);
+    expect(createdTasks[2].isDone).toBe(false);
+  });
 });

@@ -1,11 +1,15 @@
 import { PhaseDTO } from '../dto/phase.dto';
 import { PhaseModel } from '../models/phase.model';
+import { TaskModel } from '../models/task.model';
 
 export class PhasesService {
   private phaseModel: PhaseModel;
 
+  private taskModel: TaskModel;
+
   public constructor() {
     this.phaseModel = PhaseModel.getInstance();
+    this.taskModel = TaskModel.getInstance();
   }
 
   public create(input: PhaseDTO) {
@@ -25,10 +29,7 @@ export class PhasesService {
   }
 
   public update(id: string, input: PhaseDTO) {
-    const phase = this.phaseModel.find(id);
-    if (!phase) {
-      throw new Error('Phase not found');
-    }
+    const phase = this.find(id);
 
     const data = { ...phase, ...input } as PhaseModel;
     this.phaseModel.update(id, data);
@@ -44,5 +45,8 @@ export class PhasesService {
     return this.phaseModel.findAll();
   }
 
-  // TODO: Method to check if the phase is done (all tasks are done)
+  public isPhaseDone(phaseId: string) {
+    const tasks = this.taskModel.findAllByPhaseId(phaseId);
+    return tasks.every((task) => task.isDone);
+  }
 }

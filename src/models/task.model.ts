@@ -17,4 +17,8 @@ export class TaskModel extends Model<TaskModel> {
     }
     return TaskModel.instance;
   }
+
+  public findAllByPhaseId(phaseId: string) {
+    return Array.from(this.collection.values()).filter((task) => task.phaseId === phaseId);
+  }
 }
