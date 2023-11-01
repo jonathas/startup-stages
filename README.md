@@ -1,5 +1,10 @@
 # Startup Stages
 
+[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=jonathas_startup-stages&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jonathas_startup-stages)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=jonathas_startup-stages&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=jonathas_startup-stages)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=jonathas_startup-stages&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=jonathas_startup-stages)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=jonathas_startup-stages&metric=vulnerabilities&token=ac8a1bf1b29237031faaaa56ba3334801a774020)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=Cjonathas_startup-stages)
+
 A GraphQL API for documenting the stages and steps that a startup needs to go through
 
 ![Startup Stages](/docs/images/overview.png)
