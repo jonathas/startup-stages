@@ -2,7 +2,7 @@
   "name": "startup-stages",
   "private": true,
   "version": "0.0.1",
-  "description": "Documenting the stages and steps that a startup needs to go through",
+  "description": "A GraphQL API for documenting the stages and steps that a startup needs to go through",
   "main": "index.ts",
   "scripts": {
     "prebuild": "rimraf dist",

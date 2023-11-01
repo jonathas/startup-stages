@@ -1,0 +1,84 @@
+{
+  "hooks": {
+    "after:git:release": ["git checkout develop", "git merge master", "git push origin develop --force --no-verify"]
+  },
+  "git": {
+    "requireBranch": "master",
+    "commit": true,
+    "commitMessage": "chore(release): ${version} [TRIVIAL]",
+    "commitArgs": "",
+    "tag": true,
+    "tagName": "${version}",
+    "tagAnnotation": "${version}",
+    "push": true,
+    "pushArgs": [
+      "--follow-tags",
+      "--no-verify",
+      "--force"
+    ],
+    "requireCommits": true
+  },
+  "github": {
+    "release": true,
+    "releaseName": "${version}"
+  },
+  "npm": {
+    "publish": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": "CHANGELOG.md",
+      "types": [
+        {
+          "type": "feat",
+          "name": "Features"
+        },
+        {
+          "type": "fix",
+          "name": "Bug Fixes"
+        },
+        {
+          "type": "perf",
+          "name": "Performance Improvements"
+        },
+        {
+          "type": "revert",
+          "name": "Reverts"
+        },
+        {
+          "type": "docs",
+          "name": "Documentation"
+        },
+        {
+          "type": "style",
+          "name": "Styles"
+        },
+        {
+          "type": "chore",
+          "name": "Miscellaneous Chores",
+          "hidden": true
+        },
+        {
+          "type": "refactor",
+          "name": "Code Refactoring",
+          "hidden": true
+        },
+        {
+          "type": "test",
+          "name": "Tests"
+        },
+        {
+          "type": "build",
+          "name": "Build System",
+          "hidden": true
+        },
+        {
+          "type": "ci",
+          "name": "Continuous Integration",
+          "hidden": true
+        }
+      ]
+    }
+  }
+}
