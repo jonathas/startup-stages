@@ -1,7 +1,9 @@
 import { randomUUID } from 'crypto';
 
 export class Model<T> {
-  protected title: string = '';
+  public id: string = '';
+
+  public title: string = '';
 
   protected collection: Map<string, T>;
 
@@ -18,13 +20,14 @@ export class Model<T> {
   }
 
   public findAll() {
-    return this.collection;
+    return Array.from(this.collection.values());
   }
 
-  public create(object: T) {
+  public create(object: Partial<T>) {
     const id = randomUUID();
-    this.collection.set(id, object);
-    return { id, ...object };
+    const data = { id, ...object } as T;
+    this.collection.set(id, data);
+    return data;
   }
 
   public update(id: string, item: T) {

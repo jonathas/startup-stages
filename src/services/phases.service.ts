@@ -21,7 +21,7 @@ export class PhasesService {
     if (!phase) {
       throw new Error('Phase not found');
     }
-    return { id, ...phase };
+    return phase;
   }
 
   public update(id: string, input: PhaseDTO) {
@@ -30,10 +30,10 @@ export class PhasesService {
       throw new Error('Phase not found');
     }
 
-    const data = { ...phase, ...input };
+    const data = { ...phase, ...input } as PhaseModel;
     this.phaseModel.update(id, data);
 
-    return { id, ...data };
+    return data;
   }
 
   public delete(id: string) {

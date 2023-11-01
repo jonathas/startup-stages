@@ -22,7 +22,7 @@ export class TasksService {
     if (!task) {
       throw new Error('Task not found');
     }
-    return { id, ...task };
+    return task;
   }
 
   public update(id: string, input: TaskDTO) {
@@ -31,10 +31,10 @@ export class TasksService {
       throw new Error('Task not found');
     }
 
-    const data = { ...task, ...input };
+    const data = { ...task, ...input } as TaskModel;
     this.taskModel.update(id, data);
 
-    return { id, ...data };
+    return data;
   }
 
   public delete(id: string) {

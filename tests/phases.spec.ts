@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { PhaseDTO } from '../src/dto/phase.dto';
+import { PhaseModel } from '../src/models/phase.model';
 import { PhasesService } from '../src/services/phases.service';
 
 describe('# Phases', () => {
@@ -13,7 +14,7 @@ describe('# Phases', () => {
   };
 
   let phasesService: PhasesService;
-  let createdPhase: { id: string } & PhaseDTO;
+  let createdPhase: PhaseModel;
 
   beforeEach(() => {
     phasesService = new PhasesService();
@@ -64,7 +65,7 @@ describe('# Phases', () => {
     createdPhase = phasesService.create(phase);
     const phase2 = phasesService.create(newPhase);
 
-    expect(phasesService.findAll().size).toBe(2);
+    expect(phasesService.findAll().length).toBe(2);
 
     phasesService.delete(phase2.id);
   });
@@ -73,6 +74,6 @@ describe('# Phases', () => {
     const res = phasesService.create(phase);
     phasesService.delete(res.id);
 
-    expect(phasesService.findAll().size).toBe(0);
+    expect(phasesService.findAll().length).toBe(0);
   });
 });

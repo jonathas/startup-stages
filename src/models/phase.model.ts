@@ -1,10 +1,9 @@
-import { PhaseDTO } from '../dto/phase.dto';
 import { Model } from './model';
 
-export class PhaseModel extends Model<PhaseDTO> {
+export class PhaseModel extends Model<PhaseModel> {
   private static instance: PhaseModel | null = null;
 
-  private order: number = 0;
+  public order: number = 0;
 
   private constructor() {
     super();
@@ -15,10 +14,6 @@ export class PhaseModel extends Model<PhaseDTO> {
       PhaseModel.instance = new PhaseModel();
     }
     return PhaseModel.instance;
-  }
-
-  public setOrder(order: number) {
-    this.order = order;
   }
 
   public isOrderUnique(order: number) {

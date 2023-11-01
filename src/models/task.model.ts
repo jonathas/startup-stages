@@ -1,12 +1,11 @@
-import { TaskDTO } from '../dto/task.dto';
 import { Model } from './model';
 
-export class TaskModel extends Model<TaskDTO> {
+export class TaskModel extends Model<TaskModel> {
   private static instance: TaskModel | null = null;
 
-  private isDone: boolean = false;
+  public isDone: boolean = false;
 
-  private phaseId: string = '';
+  public phaseId: string = '';
 
   private constructor() {
     super();
@@ -17,13 +16,5 @@ export class TaskModel extends Model<TaskDTO> {
       TaskModel.instance = new TaskModel();
     }
     return TaskModel.instance;
-  }
-
-  public setStatus(done: boolean) {
-    this.isDone = done;
-  }
-
-  public setPhaseId(phaseId: string) {
-    this.phaseId = phaseId;
   }
 }
