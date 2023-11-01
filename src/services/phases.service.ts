@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { PhaseDTO } from '../dto/phase.dto';
 import { PhaseModel } from '../models/phase.model';
 import { TaskModel } from '../models/task.model';
@@ -12,12 +13,20 @@ export class PhasesService {
     this.taskModel = TaskModel.getInstance();
   }
 
-  public create(input: PhaseDTO) {
+  public async create(input: PhaseDTO) {
+    await this.validateInput(input);
+    return this.phaseModel.create(input);
+  }
+
+  private async validateInput(input: PhaseDTO) {
+    const validation = await validate(input);
+    if (validation.length) {
+      throw new Error(`Validation failed. Errors: ${JSON.stringify(validation)}`);
+    }
+
     if (!this.phaseModel.isOrderUnique(input.order)) {
       throw new Error('Order must be unique');
     }
-
-    return this.phaseModel.create(input);
   }
 
   public find(id: string) {
@@ -28,7 +37,9 @@ export class PhasesService {
     return phase;
   }
 
-  public update(id: string, input: PhaseDTO) {
+  public async update(id: string, input: PhaseDTO) {
+    await this.validateInput(input);
+
     const phase = this.find(id);
 
     const data = { ...phase, ...input } as PhaseModel;

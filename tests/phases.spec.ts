@@ -25,22 +25,22 @@ describe('# Phases', () => {
     phasesService.delete(createdPhase.id);
   });
 
-  it('should be possible to create a phase', () => {
-    createdPhase = phasesService.create(phase);
+  it('should be possible to create a phase', async () => {
+    createdPhase = await phasesService.create(phase);
 
     expect(createdPhase.id).not.toBeUndefined();
     expect(createdPhase.order).toBe(1);
     expect(createdPhase.title).toBe('Foundation');
   });
 
-  it('should not be possible to create a phase with the same order', () => {
-    createdPhase = phasesService.create(phase);
+  it('should not be possible to create a phase with the same order', async () => {
+    createdPhase = await phasesService.create(phase);
 
-    expect(() => phasesService.create(phase)).toThrow('Order must be unique');
+    await expect(() => phasesService.create(phase)).rejects.toThrow('Order must be unique');
   });
 
-  it('should be possible to find a phase', () => {
-    createdPhase = phasesService.create(phase);
+  it('should be possible to find a phase', async () => {
+    createdPhase = await phasesService.create(phase);
     const found = phasesService.find(createdPhase.id);
 
     expect(found).not.toBeUndefined();
@@ -49,37 +49,39 @@ describe('# Phases', () => {
     expect(found.title).toBe('Foundation');
   });
 
-  it('should be possible to update a phase', () => {
-    createdPhase = phasesService.create(phase);
-    const updated = phasesService.update(createdPhase.id, newPhase);
+  it('should be possible to update a phase', async () => {
+    createdPhase = await phasesService.create(phase);
+    const updated = await phasesService.update(createdPhase.id, newPhase);
 
     expect(updated).not.toBeUndefined();
     expect(updated.order).toBe(2);
     expect(updated.title).toBe('Discovery');
   });
 
-  it('should not be possible to update a phase if it does not exist', () => {
-    expect(() => phasesService.update('this-id-doesnt-exist', newPhase)).toThrow('Phase not found');
+  it('should not be possible to update a phase if it does not exist', async () => {
+    await expect(() => phasesService.update('this-id-doesnt-exist', newPhase)).rejects.toThrow(
+      'Phase not found'
+    );
   });
 
-  it('should be possible to find all phases', () => {
-    createdPhase = phasesService.create(phase);
-    const phase2 = phasesService.create(newPhase);
+  it('should be possible to find all phases', async () => {
+    createdPhase = await phasesService.create(phase);
+    const phase2 = await phasesService.create(newPhase);
 
     expect(phasesService.findAll().length).toBe(2);
 
     phasesService.delete(phase2.id);
   });
 
-  it('should be possible to delete a phase', () => {
-    const res = phasesService.create(phase);
+  it('should be possible to delete a phase', async () => {
+    const res = await phasesService.create(phase);
     phasesService.delete(res.id);
 
     expect(phasesService.findAll().length).toBe(0);
   });
 
-  it('should be considered as done when all tasks are done', () => {
-    createdPhase = phasesService.create(phase);
+  it('should be considered as done when all tasks are done', async () => {
+    createdPhase = await phasesService.create(phase);
     const task = {
       title: 'Setup virtual office',
       isDone: true,
@@ -93,8 +95,8 @@ describe('# Phases', () => {
 
     const tasksService = new TasksService();
 
-    const taskModel = tasksService.create(task);
-    const taskModel2 = tasksService.create(task2);
+    const taskModel = await tasksService.create(task);
+    const taskModel2 = await tasksService.create(task2);
 
     expect(phasesService.isPhaseDone(createdPhase.id)).toBe(true);
 
@@ -102,8 +104,8 @@ describe('# Phases', () => {
     tasksService.delete(taskModel2.id);
   });
 
-  it('should delete all tasks when a phase is deleted', () => {
-    createdPhase = phasesService.create(phase);
+  it('should delete all tasks when a phase is deleted', async () => {
+    createdPhase = await phasesService.create(phase);
     const task = {
       title: 'Setup virtual office',
       isDone: true,
@@ -117,8 +119,8 @@ describe('# Phases', () => {
 
     const tasksService = new TasksService();
 
-    const taskModel = tasksService.create(task);
-    const taskModel2 = tasksService.create(task2);
+    const taskModel = await tasksService.create(task);
+    const taskModel2 = await tasksService.create(task2);
 
     phasesService.delete(createdPhase.id);
 
@@ -128,7 +130,7 @@ describe('# Phases', () => {
     tasksService.delete(taskModel2.id);
   });
 
-  it('should be possible to get the next and previous phases', () => {
+  it('should be possible to get the next and previous phases', async () => {
     const phase2 = {
       order: 2,
       title: 'Discovery'
@@ -138,9 +140,9 @@ describe('# Phases', () => {
       title: 'Delivery'
     };
 
-    createdPhase = phasesService.create(phase);
-    const createdPhase2 = phasesService.create(phase2);
-    const createdPhase3 = phasesService.create(phase3);
+    createdPhase = await phasesService.create(phase);
+    const createdPhase2 = await phasesService.create(phase2);
+    const createdPhase3 = await phasesService.create(phase3);
 
     const { nextPhase, previousPhase } = phasesService.getPreviousAndNextPhases(createdPhase2.id);
 
@@ -153,8 +155,8 @@ describe('# Phases', () => {
     phasesService.delete(createdPhase3.id);
   });
 
-  it('should return undefined for the next phase if there is no next phase', () => {
-    createdPhase = phasesService.create(phase);
+  it('should return undefined for the next phase if there is no next phase', async () => {
+    createdPhase = await phasesService.create(phase);
     const { nextPhase } = phasesService.getPreviousAndNextPhases(createdPhase.id);
 
     expect(nextPhase).toBeUndefined();

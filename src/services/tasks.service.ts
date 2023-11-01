@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { TaskDTO } from '../dto/task.dto';
 import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
@@ -12,11 +13,20 @@ export class TasksService {
     this.phasesService = new PhasesService();
   }
 
-  public create(input: TaskDTO) {
+  public async create(input: TaskDTO) {
     const phase = this.phasesService.find(input.phaseId);
-    this.validateStatusChange(phase.id, input);
+    await this.validateInput(phase.id, input);
 
     return this.taskModel.create({ ...input, phaseId: phase.id });
+  }
+
+  private async validateInput(phaseId: string, input: TaskDTO) {
+    const validation = await validate(input);
+    if (validation.length) {
+      throw new Error(`Validation failed. Errors: ${JSON.stringify(validation)}`);
+    }
+
+    this.validateStatusChange(phaseId, input);
   }
 
   private validateStatusChange(phaseId: string, input: TaskDTO) {
@@ -41,9 +51,9 @@ export class TasksService {
     return task;
   }
 
-  public update(id: string, input: TaskDTO) {
+  public async update(id: string, input: TaskDTO) {
     const task = this.find(id);
-    this.validateStatusChange(task.phaseId, input);
+    await this.validateInput(task.phaseId, input);
 
     const data = { ...task, ...input } as TaskModel;
     this.taskModel.update(id, data);

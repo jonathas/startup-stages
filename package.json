@@ -92,5 +92,8 @@
   },
   "auto-changelog": {
     "output": "./CHANGELOG.md"
+  },
+  "dependencies": {
+    "class-validator": "^0.14.0"
   }
 }
