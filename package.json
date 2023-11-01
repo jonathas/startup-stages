@@ -1,9 +1,27 @@
 {
   "name": "startup-stages",
-  "private": true,
   "version": "0.0.1",
   "description": "A GraphQL API for documenting the stages and steps that a startup needs to go through",
-  "main": "index.ts",
+  "author": "Jonathas Ribeiro <contact@jonathas.com>",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "bugs": {
+    "url": "https://github.com/jonathas/startup-stages/issues"
+  },
+  "homepage": "https://github.com/jonathas/startup-stages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonathas/startup-stages.git"
+  },
+  "keywords": [
+    "startup",
+    "nodejs",
+    "typescript",
+    "graphql"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
@@ -18,25 +36,6 @@
     "postinstall": "npm run build",
     "release": "release-it"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jonathas/startup-stages.git"
-  },
-  "keywords": [
-    "startup",
-    "nodejs",
-    "typescript",
-    "graphql"
-  ],
-  "author": "Jonathas Ribeiro <contact@jonathas.com>",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.18.0"
-  },
-  "bugs": {
-    "url": "https://github.com/jonathas/startup-stages/issues"
-  },
-  "homepage": "https://github.com/jonathas/startup-stages#readme",
   "lint-staged": {
     "*.ts": [
       "eslint --fix"
