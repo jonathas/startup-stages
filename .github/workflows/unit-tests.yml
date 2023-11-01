@@ -1,0 +1,36 @@
+name: Run unit tests and SonarCloud scan
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+    branches:
+      - master
+      - develop
+
+  push:
+    branches:
+      - master
+      - develop
+    tags:
+      - '*'
+
+jobs:
+  run-unit-tests:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.18.0
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:cov
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
