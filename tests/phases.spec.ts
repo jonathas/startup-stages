@@ -101,4 +101,62 @@ describe('# Phases', () => {
     tasksService.delete(taskModel.id);
     tasksService.delete(taskModel2.id);
   });
+
+  it('should delete all tasks when a phase is deleted', () => {
+    createdPhase = phasesService.create(phase);
+    const task = {
+      title: 'Setup virtual office',
+      isDone: true,
+      phaseId: createdPhase.id
+    };
+    const task2 = {
+      title: 'Set mission & vision',
+      isDone: true,
+      phaseId: createdPhase.id
+    };
+
+    const tasksService = new TasksService();
+
+    const taskModel = tasksService.create(task);
+    const taskModel2 = tasksService.create(task2);
+
+    phasesService.delete(createdPhase.id);
+
+    expect(tasksService.findAll().length).toBe(0);
+
+    tasksService.delete(taskModel.id);
+    tasksService.delete(taskModel2.id);
+  });
+
+  it('should be possible to get the next and previous phases', () => {
+    const phase2 = {
+      order: 2,
+      title: 'Discovery'
+    };
+    const phase3 = {
+      order: 3,
+      title: 'Delivery'
+    };
+
+    createdPhase = phasesService.create(phase);
+    const createdPhase2 = phasesService.create(phase2);
+    const createdPhase3 = phasesService.create(phase3);
+
+    const { nextPhase, previousPhase } = phasesService.getPreviousAndNextPhases(createdPhase2.id);
+
+    expect(nextPhase).not.toBeUndefined();
+    expect(nextPhase.id).toBe(createdPhase3.id);
+    expect(previousPhase).not.toBeUndefined();
+    expect(previousPhase.id).toBe(createdPhase.id);
+
+    phasesService.delete(createdPhase2.id);
+    phasesService.delete(createdPhase3.id);
+  });
+
+  it('should return undefined for the next phase if there is no next phase', () => {
+    createdPhase = phasesService.create(phase);
+    const { nextPhase } = phasesService.getPreviousAndNextPhases(createdPhase.id);
+
+    expect(nextPhase).toBeUndefined();
+  });
 });

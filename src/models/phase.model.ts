@@ -21,4 +21,8 @@ export class PhaseModel extends Model<PhaseModel> {
       (existingPhase) => existingPhase.order !== order
     );
   }
+
+  public getAllOrderedByOrder() {
+    return Array.from(this.collection.values()).sort((a, b) => a.order - b.order);
+  }
 }

@@ -151,7 +151,7 @@ describe('# Tasks', () => {
     expect(res.isDone).toBe(false);
 
     // But then if we try to update it as done, it should not work
-    expect(() => tasksService.update(res.id, { ...newTask, isDone: true } as TaskDTO)).toThrow(
+    expect(() => tasksService.update(res.id, { isDone: true } as TaskDTO)).toThrow(
       'Tasks from the previous phase are not completed'
     );
   });

@@ -38,6 +38,9 @@ export class PhasesService {
   }
 
   public delete(id: string) {
+    const tasks = this.taskModel.findAllByPhaseId(id);
+    tasks.forEach((task) => this.taskModel.delete(task.id));
+
     this.phaseModel.delete(id);
   }
 
@@ -48,5 +51,16 @@ export class PhasesService {
   public isPhaseDone(phaseId: string) {
     const tasks = this.taskModel.findAllByPhaseId(phaseId);
     return tasks.every((task) => task.isDone);
+  }
+
+  public getPreviousAndNextPhases(phaseId: string) {
+    const phases = this.phaseModel.getAllOrderedByOrder();
+
+    const currentPhaseIndex = phases.findIndex((phase) => phase.id === phaseId);
+
+    const previousPhase = phases[currentPhaseIndex - 1];
+    const nextPhase = phases[currentPhaseIndex + 1];
+
+    return { previousPhase, nextPhase };
   }
 }
