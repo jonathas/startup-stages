@@ -1,3 +1,5 @@
+// TODO: Input validation
+
 export class PhaseDTO {
   public order: number = 0;
 

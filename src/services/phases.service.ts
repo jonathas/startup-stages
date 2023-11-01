@@ -5,7 +5,7 @@ export class PhasesService {
   private phaseModel: PhaseModel;
 
   public constructor() {
-    this.phaseModel = new PhaseModel();
+    this.phaseModel = PhaseModel.getInstance();
   }
 
   public create(input: PhaseDTO) {
@@ -30,9 +30,10 @@ export class PhasesService {
       throw new Error('Phase not found');
     }
 
-    this.phaseModel.update(id, input);
+    const data = { ...phase, ...input };
+    this.phaseModel.update(id, data);
 
-    return { id, ...input };
+    return { id, ...data };
   }
 
   public delete(id: string) {

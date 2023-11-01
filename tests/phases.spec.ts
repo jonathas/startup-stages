@@ -13,53 +13,60 @@ describe('# Phases', () => {
   };
 
   let phasesService: PhasesService;
+  let createdPhase: { id: string } & PhaseDTO;
 
   beforeEach(() => {
     phasesService = new PhasesService();
   });
 
-  it('should be possible to create a phase', () => {
-    const res = phasesService.create(phase);
+  afterEach(() => {
+    phasesService.delete(createdPhase.id);
+  });
 
-    expect(res.id).not.toBeUndefined();
-    expect(res.order).toBe(1);
-    expect(res.title).toBe('Foundation');
+  it('should be possible to create a phase', () => {
+    createdPhase = phasesService.create(phase);
+
+    expect(createdPhase.id).not.toBeUndefined();
+    expect(createdPhase.order).toBe(1);
+    expect(createdPhase.title).toBe('Foundation');
   });
 
   it('should not be possible to create a phase with the same order', () => {
-    phasesService.create(phase);
+    createdPhase = phasesService.create(phase);
 
     expect(() => phasesService.create(phase)).toThrow('Order must be unique');
   });
 
   it('should be possible to find a phase', () => {
-    const res = phasesService.create(phase);
-    const found = phasesService.find(res.id);
+    createdPhase = phasesService.create(phase);
+    const found = phasesService.find(createdPhase.id);
 
     expect(found).not.toBeUndefined();
-    expect(found.id).toBe(res.id);
+    expect(found.id).toBe(createdPhase.id);
     expect(found.order).toBe(1);
     expect(found.title).toBe('Foundation');
   });
 
   it('should be possible to update a phase', () => {
-    const res = phasesService.create(phase);
-    const updated = phasesService.update(res.id, newPhase);
+    createdPhase = phasesService.create(phase);
+    const updated = phasesService.update(createdPhase.id, newPhase);
 
     expect(updated).not.toBeUndefined();
     expect(updated.order).toBe(2);
     expect(updated.title).toBe('Discovery');
   });
 
-  it('should not be able to update a phase if it does not exist', () => {
+  it('should not be possible to update a phase if it does not exist', () => {
     expect(() => phasesService.update('this-id-doesnt-exist', newPhase)).toThrow('Phase not found');
   });
 
   it('should be possible to find all phases', () => {
-    phasesService.create(phase);
-    phasesService.create(newPhase);
+    createdPhase = phasesService.create(phase);
+    const phase2 = phasesService.create(newPhase);
 
     expect(phasesService.findAll().size).toBe(2);
+
+    phasesService.delete(phase2.id);
   });
 
   it('should be possible to delete a phase', () => {
