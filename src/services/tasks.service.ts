@@ -45,9 +45,17 @@ export class TasksService {
       );
     }
 
-    // Trying to undo a task in the current phase when the next phase is already completed
-    if (!input.isDone && nextPhase && this.phasesService.isPhaseDone(nextPhase.id)) {
-      throw new ApolloError('Tasks from the next phase are already completed', 'NEXT_PHASE_DONE');
+    // Trying to undo a task in the current phase when any task of next phase is already completed
+    if (
+      !input.isDone &&
+      nextPhase &&
+      this.phasesService.isAtLeastOneItemOfPhaseDone(nextPhase.id)
+    ) {
+      throw new ApolloError(
+        `At least one task from from the next phase is already completed, ` +
+          `so this task cannot be updated to not done`,
+        'NEXT_PHASE_DONE'
+      );
     }
   }
 

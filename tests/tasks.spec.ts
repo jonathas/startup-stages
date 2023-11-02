@@ -189,7 +189,10 @@ describe('# Tasks', () => {
     // If we try to set any task in the previous phase to not done, it should not work
     await expect(() =>
       tasksService.update({ ...task, isDone: false, id: createdTasks[1].id } as UpdateTaskInput)
-    ).rejects.toThrow('Tasks from the next phase are already completed');
+    ).rejects.toThrow(
+      `At least one task from from the next phase is already completed, ` +
+        `so this task cannot be updated to not done`
+    );
 
     // If we try to set any task in the current task to not done, it should work
     createdTasks.push(

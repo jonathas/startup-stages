@@ -73,6 +73,14 @@ export class PhasesService {
     return tasks.every((task) => task.isDone);
   }
 
+  public isAtLeastOneItemOfPhaseDone(phaseId: string) {
+    const tasks = this.taskModel.findAllByPhaseId(phaseId);
+    if (!tasks?.length) {
+      return false;
+    }
+    return tasks.some((task) => task.isDone);
+  }
+
   public getPreviousAndNextPhases(phaseId: string) {
     const phases = this.phaseModel.getAllOrderedByOrder();
 
