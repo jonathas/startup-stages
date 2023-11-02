@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "126853f0-d2a8-4404-af28-8114286bbeb1",
+		"name": "Startup Stages",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "836543"
+	},
+	"item": [
+		{
+			"name": "Phases",
+			"item": [
+				{
+					"name": "Create Phase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();",
+									"pm.environment.set('phaseId', res.data.createPhase.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreatePhase($title: String, $order: Int) {\n  createPhase(title: $title, order: $order) {\n    title\n    order\n    id\n  }\n}",
+								"variables": "{\n  \"title\": \"Foundation\",\n  \"order\": 1\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Phases",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();",
+									"",
+									"if (res?.data?.phases?.length) {",
+									"    pm.environment.set('phaseId', res.data.phases[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Phases {\n  phases {\n    id\n    title\n    order\n    isDone\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Phase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Phase($phaseId: String) {\n  phase(id: $phaseId) {\n    id\n    order\n    title\n    isDone\n  }\n}\n",
+								"variables": "{\n  \"phaseId\": \"{{phaseId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Phase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdatePhase($updatePhaseId: String!, $title: String, $order: Int) {\n  updatePhase(id: $updatePhaseId, title: $title, order: $order) {\n    id\n    order\n    title\n    isDone\n  }\n}\n",
+								"variables": "{\n  \"updatePhaseId\": \"{{phaseId}}\",\n  \"title\": \"New Phase\",\n  \"order\": 1\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Phase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation DeletePhase($deletePhaseId: String!) {\n  deletePhase(id: $deletePhaseId)\n}",
+								"variables": "{\n  \"deletePhaseId\": \"{{phaseId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Create Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();",
+									"pm.environment.set('taskId', res.data.createTask.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateTask($title: String!, $phaseId: String!, $isDone: Boolean!) {\n  createTask(title: $title, phaseId: $phaseId, isDone: $isDone) {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"variables": "{\n  \"title\": \"Setup virtual office\",\n  \"phaseId\": \"{{phaseId}}\",\n  \"isDone\": false\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();",
+									"",
+									"if (res?.data?.tasks?.length) {",
+									"    pm.environment.set('taskId', res.data.tasks[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Tasks {\n  tasks {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Task($taskId: String) {\n  task(id: $taskId) {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"variables": "{\n  \"taskId\": \"{{taskId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateTask($updateTaskId: String!, $isDone: Boolean) {\n  updateTask(id: $updateTaskId, isDone: $isDone) {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"variables": "{\n  \"updateTaskId\": \"{{taskId}}\",\n  \"isDone\": true\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation DeleteTask($deleteTaskId: String!) {\n  deleteTask(id: $deleteTaskId)\n}\n",
+								"variables": "{\n  \"deleteTaskId\": \"{{taskId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
