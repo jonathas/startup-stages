@@ -108,7 +108,7 @@
 							"mode": "graphql",
 							"graphql": {
 								"query": "mutation UpdatePhase($updatePhaseId: String!, $title: String, $order: Int) {\n  updatePhase(id: $updatePhaseId, title: $title, order: $order) {\n    id\n    order\n    title\n    isDone\n  }\n}\n",
-								"variables": "{\n  \"updatePhaseId\": \"{{phaseId}}\",\n  \"title\": \"New Phase\",\n  \"order\": 1\n}"
+								"variables": "{\n  \"updatePhaseId\": \"{{phaseId}}\",\n  \"title\": \"New Phase\",\n  \"order\": 2\n}"
 							}
 						},
 						"url": {
@@ -244,7 +244,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation UpdateTask($updateTaskId: String!, $isDone: Boolean) {\n  updateTask(id: $updateTaskId, isDone: $isDone) {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"query": "mutation UpdateTask($updateTaskId: String!, $isDone: Boolean) {\n  updateTask(id: $updateTaskId, isDone: $isDone) {\n    id\n    title\n    isDone\n  }\n}",
 								"variables": "{\n  \"updateTaskId\": \"{{taskId}}\",\n  \"isDone\": true\n}"
 							}
 						},
