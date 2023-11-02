@@ -190,7 +190,7 @@ describe('# Tasks', () => {
     await expect(() =>
       tasksService.update({ ...task, isDone: false, id: createdTasks[1].id } as UpdateTaskInput)
     ).rejects.toThrow(
-      `At least one task from from the next phase is already completed, ` +
+      `At least one task from the next phase is already completed, ` +
         `so this task cannot be updated to not done`
     );
 

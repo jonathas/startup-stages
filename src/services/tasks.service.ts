@@ -52,7 +52,7 @@ export class TasksService {
       this.phasesService.isAtLeastOneItemOfPhaseDone(nextPhase.id)
     ) {
       throw new ApolloError(
-        `At least one task from from the next phase is already completed, ` +
+        `At least one task from the next phase is already completed, ` +
           `so this task cannot be updated to not done`,
         'NEXT_PHASE_DONE'
       );
