@@ -51,7 +51,7 @@ describe('# Phases', () => {
 
   it('should be possible to update a phase', async () => {
     createdPhase = await phasesService.create(phase);
-    const updated = await phasesService.update(createdPhase.id, newPhase);
+    const updated = await phasesService.update({ ...newPhase, id: createdPhase.id });
 
     expect(updated).not.toBeUndefined();
     expect(updated.order).toBe(2);
@@ -59,9 +59,9 @@ describe('# Phases', () => {
   });
 
   it('should not be possible to update a phase if it does not exist', async () => {
-    await expect(() => phasesService.update('this-id-doesnt-exist', newPhase)).rejects.toThrow(
-      'Phase not found'
-    );
+    await expect(() =>
+      phasesService.update({ ...newPhase, id: 'this-id-doesnt-exist' })
+    ).rejects.toThrow('Phase not found');
   });
 
   it('should be possible to find all phases', async () => {

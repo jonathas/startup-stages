@@ -2,11 +2,18 @@ import { IsBoolean, IsString } from 'class-validator';
 
 export class TaskDTO {
   @IsString()
-  public title: string = '';
+  public title: string;
 
   @IsBoolean()
-  public isDone: boolean = false;
+  public isDone: boolean;
 
   @IsString()
-  public phaseId: string = '';
+  public phaseId: string;
+}
+
+export class CreateTaskInput extends TaskDTO {}
+
+export class UpdateTaskInput extends TaskDTO {
+  @IsString()
+  public id: string;
 }

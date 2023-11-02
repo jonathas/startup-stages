@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { PhaseDTO } from '../src/dto/phase.dto';
-import { TaskDTO } from '../src/dto/task.dto';
+import { TaskDTO, UpdateTaskInput } from '../src/dto/task.dto';
 import { PhaseModel } from '../src/models/phase.model';
 import { TaskModel } from '../src/models/task.model';
 import { PhasesService } from '../src/services/phases.service';
@@ -77,7 +77,10 @@ describe('# Tasks', () => {
     task.phaseId = createdPhases[0].id;
 
     createdTasks.push(await tasksService.create(task as TaskDTO));
-    const updated = await tasksService.update(createdTasks[0].id, newTask as TaskDTO);
+    const updated = await tasksService.update({
+      ...newTask,
+      id: createdTasks[0].id
+    } as UpdateTaskInput);
 
     expect(updated).not.toBeUndefined();
     expect(updated.id).toBe(createdTasks[0].id);
@@ -87,9 +90,9 @@ describe('# Tasks', () => {
   });
 
   it('should not be possible to update a task if it does not exist', async () => {
-    await expect(() => tasksService.update('123', newTask as TaskDTO)).rejects.toThrow(
-      'Task not found'
-    );
+    await expect(() =>
+      tasksService.update({ ...newTask, id: '123' } as UpdateTaskInput)
+    ).rejects.toThrow('Task not found');
   });
 
   it('should be possible to find all tasks', async () => {
@@ -156,9 +159,9 @@ describe('# Tasks', () => {
     expect(res.isDone).toBe(false);
 
     // But then if we try to update it as done, it should not work
-    await expect(() => tasksService.update(res.id, { isDone: true } as TaskDTO)).rejects.toThrow(
-      'Tasks from the previous phase are not completed'
-    );
+    await expect(() =>
+      tasksService.update({ id: res.id, isDone: true } as UpdateTaskInput)
+    ).rejects.toThrow('Tasks from the previous phase are not completed');
   });
 
   it('should set a task to not done only if all tasks in the next phase are not done', async () => {
@@ -183,12 +186,12 @@ describe('# Tasks', () => {
 
     // If we try to set any task in the previous phase to not done, it should not work
     await expect(() =>
-      tasksService.update(createdTasks[1].id, { ...task, isDone: false } as TaskDTO)
+      tasksService.update({ ...task, isDone: false, id: createdTasks[1].id } as UpdateTaskInput)
     ).rejects.toThrow('Tasks from the next phase are already completed');
 
     // If we try to set any task in the current task to not done, it should work
     createdTasks.push(
-      await tasksService.update(thirdTask.id, { ...newTask, isDone: false } as TaskDTO)
+      await tasksService.update({ ...newTask, isDone: false, id: thirdTask.id } as UpdateTaskInput)
     );
 
     expect(createdTasks[2]).not.toBeUndefined();

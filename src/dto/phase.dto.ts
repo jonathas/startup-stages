@@ -2,8 +2,15 @@ import { IsInt, IsString } from 'class-validator';
 
 export class PhaseDTO {
   @IsInt()
-  public order: number = 0;
+  public order: number;
 
   @IsString()
-  public title: string = '';
+  public title: string;
+}
+
+export class CreatePhaseInput extends PhaseDTO {}
+
+export class UpdatePhaseInput extends PhaseDTO {
+  @IsString()
+  public id: string;
 }

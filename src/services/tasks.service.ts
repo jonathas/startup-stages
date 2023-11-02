@@ -1,7 +1,8 @@
 import { validate } from 'class-validator';
-import { TaskDTO } from '../dto/task.dto';
 import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
+import { Helpers } from '../helpers/helpers';
+import { CreateTaskInput, TaskDTO, UpdateTaskInput } from '../dto/task.dto';
 
 export class TasksService {
   private taskModel: TaskModel;
@@ -13,7 +14,10 @@ export class TasksService {
     this.phasesService = new PhasesService();
   }
 
-  public async create(input: TaskDTO) {
+  public async create(input: CreateTaskInput) {
+    if (!input.phaseId) {
+      throw new Error('PhaseId is required');
+    }
     const phase = this.phasesService.find(input.phaseId);
     await this.validateInput(phase.id, input);
 
@@ -51,12 +55,14 @@ export class TasksService {
     return task;
   }
 
-  public async update(id: string, input: TaskDTO) {
-    const task = this.find(id);
+  public async update(input: UpdateTaskInput) {
+    const task = this.find(input.id);
     await this.validateInput(task.phaseId, input);
 
-    const data = { ...task, ...input } as TaskModel;
-    this.taskModel.update(id, data);
+    const newValues = Helpers.getOnlyDefinedValues(input);
+
+    const data = { ...task, ...newValues } as TaskModel;
+    this.taskModel.update(input.id, data);
 
     return data;
   }

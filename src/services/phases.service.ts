@@ -1,7 +1,8 @@
 import { validate } from 'class-validator';
-import { PhaseDTO } from '../dto/phase.dto';
+import { PhaseDTO, UpdatePhaseInput } from '../dto/phase.dto';
 import { PhaseModel } from '../models/phase.model';
 import { TaskModel } from '../models/task.model';
+import { Helpers } from '../helpers/helpers';
 
 export class PhasesService {
   private phaseModel: PhaseModel;
@@ -24,7 +25,7 @@ export class PhasesService {
       throw new Error(`Validation failed. Errors: ${JSON.stringify(validation)}`);
     }
 
-    if (!this.phaseModel.isOrderUnique(input.order)) {
+    if (input.order && !this.phaseModel.isOrderUnique(input.order)) {
       throw new Error('Order must be unique');
     }
   }
@@ -37,13 +38,15 @@ export class PhasesService {
     return phase;
   }
 
-  public async update(id: string, input: PhaseDTO) {
+  public async update(input: UpdatePhaseInput) {
     await this.validateInput(input);
 
-    const phase = this.find(id);
+    const phase = this.find(input.id);
 
-    const data = { ...phase, ...input } as PhaseModel;
-    this.phaseModel.update(id, data);
+    const newValues = Helpers.getOnlyDefinedValues(input);
+
+    const data = { ...phase, ...newValues } as PhaseModel;
+    this.phaseModel.update(input.id, data);
 
     return data;
   }

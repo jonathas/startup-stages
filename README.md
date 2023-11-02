@@ -91,11 +91,19 @@ erDiagram
   }
 ```
 
-## Postman collection
+## Accessing the API
+
+### Postman collection
 
 A [Postman](https://www.postman.com/downloads/) collection can be found inside of the docs directory. You can just import it to Postman and start using it to interact with the API.
+
+### Apollo Sandbox
+
+You can also use Apollo Sandbox for acessing the API. Just run the project in development mode and then access http://localhost:3000/graphql in the browser
+
+![Apollo Sandbox](/docs/images/apollo-sandbox.png)
 
 ## Known limitations
 
 - The progress is currently only saved in memory (not database)
-- 
+- There's no pagination
