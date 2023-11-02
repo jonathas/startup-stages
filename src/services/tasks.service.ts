@@ -1,8 +1,8 @@
 import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
-import { Helpers } from '../helpers/helpers';
-import { CreateTaskInput, TaskDTO, UpdateTaskInput } from '../dto/task.dto';
+import { CreateTaskInput, UpdateTaskInput } from '../dto/task.dto';
 import { UserInputError, ApolloError } from 'apollo-server-errors';
 
 export class TasksService {
@@ -16,13 +16,14 @@ export class TasksService {
   }
 
   public async create(input: CreateTaskInput) {
+    input = plainToInstance(CreateTaskInput, input);
     const phase = this.phasesService.find(input.phaseId);
     await this.validateInput(phase.id, input);
 
     return this.taskModel.create({ ...input, phaseId: phase.id });
   }
 
-  private async validateInput(phaseId: string, input: TaskDTO) {
+  private async validateInput(phaseId: string, input: CreateTaskInput | UpdateTaskInput) {
     const errors = await validate(input);
     if (errors.length) {
       throw new UserInputError('Invalid input data', {
@@ -33,7 +34,7 @@ export class TasksService {
     this.validateStatusChange(phaseId, input);
   }
 
-  private validateStatusChange(phaseId: string, input: TaskDTO) {
+  private validateStatusChange(phaseId: string, input: CreateTaskInput | UpdateTaskInput) {
     const { previousPhase, nextPhase } = this.phasesService.getPreviousAndNextPhases(phaseId);
 
     // Trying to set a task to done when the previous phase is not completed
@@ -59,12 +60,11 @@ export class TasksService {
   }
 
   public async update(input: UpdateTaskInput) {
+    input = plainToInstance(UpdateTaskInput, input);
     const task = this.find(input.id);
     await this.validateInput(task.phaseId, input);
 
-    const newValues = Helpers.getOnlyDefinedValues(input);
-
-    const data = { ...task, ...newValues } as TaskModel;
+    const data = { ...task, ...input } as TaskModel;
     this.taskModel.update(input.id, data);
 
     return data;

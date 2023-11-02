@@ -1,25 +1,25 @@
 /* eslint-disable max-lines-per-function */
-import { PhaseDTO } from '../src/dto/phase.dto';
-import { TaskDTO, UpdateTaskInput } from '../src/dto/task.dto';
+import { CreatePhaseInput } from '../src/dto/phase.dto';
+import { CreateTaskInput, UpdateTaskInput } from '../src/dto/task.dto';
 import { PhaseModel } from '../src/models/phase.model';
 import { TaskModel } from '../src/models/task.model';
 import { PhasesService } from '../src/services/phases.service';
 import { TasksService } from '../src/services/tasks.service';
 
 describe('# Tasks', () => {
-  const phase: PhaseDTO = {
+  const phase: CreatePhaseInput = {
     order: 1,
     title: 'Foundation'
   };
-  const secondPhase: PhaseDTO = {
+  const secondPhase: CreatePhaseInput = {
     order: 2,
     title: 'Discovery'
   };
-  const task: Partial<TaskDTO> = {
+  const task: Partial<CreateTaskInput> = {
     title: 'Setup virtual office',
     isDone: false
   };
-  const newTask: Partial<TaskDTO> = {
+  const newTask: Partial<CreateTaskInput> = {
     title: 'Setup virtual office today',
     isDone: true
   };
@@ -46,7 +46,7 @@ describe('# Tasks', () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
-    createdTasks.push(await tasksService.create(task as TaskDTO));
+    createdTasks.push(await tasksService.create(task as CreateTaskInput));
 
     expect(createdTasks[0].id).not.toBeUndefined();
     expect(createdTasks[0].title).toBe('Setup virtual office');
@@ -55,14 +55,16 @@ describe('# Tasks', () => {
   });
 
   it('should not be possible to create a task without a phase', async () => {
-    await expect(() => tasksService.create(task as TaskDTO)).rejects.toThrow('Phase not found');
+    await expect(() => tasksService.create(task as CreateTaskInput)).rejects.toThrow(
+      'Phase not found'
+    );
   });
 
   it('should be possible to find a task', async () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
-    createdTasks.push(await tasksService.create(task as TaskDTO));
+    createdTasks.push(await tasksService.create(task as CreateTaskInput));
     const found = tasksService.find(createdTasks[0].id);
 
     expect(found).not.toBeUndefined();
@@ -76,7 +78,7 @@ describe('# Tasks', () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
-    createdTasks.push(await tasksService.create(task as TaskDTO));
+    createdTasks.push(await tasksService.create(task as CreateTaskInput));
     const updated = await tasksService.update({
       ...newTask,
       id: createdTasks[0].id
@@ -99,11 +101,11 @@ describe('# Tasks', () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
-    createdTasks.push(await tasksService.create(task as TaskDTO));
+    createdTasks.push(await tasksService.create(task as CreateTaskInput));
     const secondTask = await tasksService.create({
       ...newTask,
       phaseId: createdPhases[0].id
-    } as TaskDTO);
+    } as CreateTaskInput);
     const found = tasksService.findAll();
 
     expect(found).not.toBeUndefined();
@@ -120,7 +122,7 @@ describe('# Tasks', () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
-    const res = await tasksService.create(task as TaskDTO);
+    const res = await tasksService.create(task as CreateTaskInput);
     tasksService.delete(res.id);
 
     expect(() => tasksService.find(res.id)).toThrow('Task not found');
@@ -130,10 +132,10 @@ describe('# Tasks', () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
-    createdTasks.push(await tasksService.create(task as TaskDTO)); // isDone = false
+    createdTasks.push(await tasksService.create(task as CreateTaskInput)); // isDone = false
 
     newTask.phaseId = createdPhases[0].id;
-    createdTasks.push(await tasksService.create(newTask as TaskDTO)); // isDone = true
+    createdTasks.push(await tasksService.create(newTask as CreateTaskInput)); // isDone = true
 
     // Meaning that not all tasks in the Foundation phase are completed
 
@@ -144,7 +146,7 @@ describe('# Tasks', () => {
      * phase is not done
      */
     await expect(() =>
-      tasksService.create({ ...newTask, phaseId: createdPhases[1].id } as TaskDTO)
+      tasksService.create({ ...newTask, phaseId: createdPhases[1].id } as CreateTaskInput)
     ).rejects.toThrow('Tasks from the previous phase are not completed');
 
     // If it is created as not done, it should work
@@ -152,7 +154,7 @@ describe('# Tasks', () => {
       ...newTask,
       phaseId: createdPhases[1].id,
       isDone: false
-    } as TaskDTO);
+    } as CreateTaskInput);
 
     expect(res).not.toBeUndefined();
     expect(res.id).not.toBeUndefined();
@@ -168,10 +170,10 @@ describe('# Tasks', () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
-    createdTasks.push(await tasksService.create({ ...task, isDone: true } as TaskDTO));
+    createdTasks.push(await tasksService.create({ ...task, isDone: true } as CreateTaskInput));
 
     newTask.phaseId = createdPhases[0].id;
-    createdTasks.push(await tasksService.create(newTask as TaskDTO)); // isDone = true
+    createdTasks.push(await tasksService.create(newTask as CreateTaskInput)); // isDone = true
 
     // Meaning that all tasks in the Foundation phase are completed
 
@@ -182,7 +184,7 @@ describe('# Tasks', () => {
       ...newTask,
       phaseId: createdPhases[1].id,
       isDone: true
-    } as TaskDTO);
+    } as CreateTaskInput);
 
     // If we try to set any task in the previous phase to not done, it should not work
     await expect(() =>

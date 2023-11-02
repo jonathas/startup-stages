@@ -1,8 +1,8 @@
 import { validate } from 'class-validator';
-import { PhaseDTO, UpdatePhaseInput } from '../dto/phase.dto';
+import { plainToInstance } from 'class-transformer';
+import { CreatePhaseInput, UpdatePhaseInput } from '../dto/phase.dto';
 import { PhaseModel } from '../models/phase.model';
 import { TaskModel } from '../models/task.model';
-import { Helpers } from '../helpers/helpers';
 import { UserInputError, ApolloError } from 'apollo-server-errors';
 
 export class PhasesService {
@@ -15,12 +15,13 @@ export class PhasesService {
     this.taskModel = TaskModel.getInstance();
   }
 
-  public async create(input: PhaseDTO) {
+  public async create(input: CreatePhaseInput) {
+    input = plainToInstance(CreatePhaseInput, input);
     await this.validateInput(input);
     return this.phaseModel.create(input);
   }
 
-  private async validateInput(input: PhaseDTO) {
+  private async validateInput(input: CreatePhaseInput) {
     const errors = await validate(input);
     if (errors.length) {
       throw new UserInputError('Invalid input data', {
@@ -42,13 +43,12 @@ export class PhasesService {
   }
 
   public async update(input: UpdatePhaseInput) {
+    input = plainToInstance(UpdatePhaseInput, input);
     await this.validateInput(input);
 
     const phase = this.find(input.id);
 
-    const newValues = Helpers.getOnlyDefinedValues(input);
-
-    const data = { ...phase, ...newValues } as PhaseModel;
+    const data = { ...phase, ...input } as PhaseModel;
     this.phaseModel.update(input.id, data);
 
     return data;

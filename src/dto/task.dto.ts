@@ -1,6 +1,6 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class TaskDTO {
+export class CreateTaskInput {
   @IsString()
   @IsNotEmpty()
   public title: string;
@@ -13,9 +13,16 @@ export class TaskDTO {
   public phaseId: string;
 }
 
-export class CreateTaskInput extends TaskDTO {}
-
-export class UpdateTaskInput extends TaskDTO {
+export class UpdateTaskInput {
   @IsString()
   public id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  public title: string;
+
+  @IsBoolean()
+  @IsOptional()
+  public isDone: boolean;
 }

@@ -1,6 +1,6 @@
-import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
-export class PhaseDTO {
+export class CreatePhaseInput {
   @IsInt()
   @IsNotEmpty()
   @Min(0)
@@ -11,9 +11,18 @@ export class PhaseDTO {
   public title: string;
 }
 
-export class CreatePhaseInput extends PhaseDTO {}
-
-export class UpdatePhaseInput extends PhaseDTO {
+export class UpdatePhaseInput {
   @IsString()
   public id: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  @Min(0)
+  @IsOptional()
+  public order: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  public title: string;
 }

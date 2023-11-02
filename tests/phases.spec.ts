@@ -1,15 +1,15 @@
 /* eslint-disable max-lines-per-function */
-import { PhaseDTO } from '../src/dto/phase.dto';
+import { CreatePhaseInput } from '../src/dto/phase.dto';
 import { PhaseModel } from '../src/models/phase.model';
 import { PhasesService } from '../src/services/phases.service';
 import { TasksService } from '../src/services/tasks.service';
 
 describe('# Phases', () => {
-  const phase: PhaseDTO = {
+  const phase: CreatePhaseInput = {
     order: 1,
     title: 'Foundation'
   };
-  const newPhase: PhaseDTO = {
+  const newPhase: CreatePhaseInput = {
     order: 2,
     title: 'Discovery'
   };
