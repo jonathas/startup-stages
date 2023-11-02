@@ -67,6 +67,9 @@ export class PhasesService {
 
   public isPhaseDone(phaseId: string) {
     const tasks = this.taskModel.findAllByPhaseId(phaseId);
+    if (!tasks?.length) {
+      return false;
+    }
     return tasks.every((task) => task.isDone);
   }
 

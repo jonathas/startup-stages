@@ -11,6 +11,9 @@ const Phase = objectType({
     t.string('id');
     t.int('order');
     t.string('title');
+    t.boolean('isDone', {
+      resolve: (parent) => phasesService.isPhaseDone(parent.id)
+    });
   }
 });
 
