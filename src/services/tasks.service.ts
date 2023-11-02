@@ -77,4 +77,8 @@ export class TasksService {
   public findAll() {
     return this.taskModel.findAll();
   }
+
+  public findAllByPhaseId(phaseId: string) {
+    return this.taskModel.findAllByPhaseId(phaseId);
+  }
 }

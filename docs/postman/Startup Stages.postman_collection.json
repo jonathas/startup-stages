@@ -65,7 +65,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query Phases {\n  phases {\n    id\n    title\n    order\n    isDone\n  }\n}",
+								"query": "query Phases {\n  phases {\n    id\n    title\n    order\n    isDone\n    tasks {\n        id\n        title\n        isDone\n    }\n  }\n}",
 								"variables": ""
 							}
 						},
@@ -86,7 +86,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query Phase($phaseId: String) {\n  phase(id: $phaseId) {\n    id\n    order\n    title\n    isDone\n  }\n}\n",
+								"query": "query Phase($phaseId: String) {\n  phase(id: $phaseId) {\n    id\n    order\n    title\n    isDone\n    tasks {\n        id\n        title\n        isDone\n    }\n  }\n}\n",
 								"variables": "{\n  \"phaseId\": \"{{phaseId}}\"\n}"
 							}
 						},
@@ -166,7 +166,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreateTask($title: String!, $phaseId: String!, $isDone: Boolean!) {\n  createTask(title: $title, phaseId: $phaseId, isDone: $isDone) {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"query": "mutation CreateTask($title: String!, $phaseId: String!, $isDone: Boolean!) {\n  createTask(title: $title, phaseId: $phaseId, isDone: $isDone) {\n    id\n    title\n    isDone\n    phase {\n        id\n    }\n  }\n}",
 								"variables": "{\n  \"title\": \"Setup virtual office\",\n  \"phaseId\": \"{{phaseId}}\",\n  \"isDone\": false\n}"
 							}
 						},
@@ -202,7 +202,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query Tasks {\n  tasks {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"query": "query Tasks {\n  tasks {\n    id\n    title\n    isDone\n    phase {\n        id\n        title\n        order\n        isDone\n    }\n  }\n}",
 								"variables": ""
 							}
 						},
@@ -223,7 +223,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query Task($taskId: String) {\n  task(id: $taskId) {\n    id\n    title\n    isDone\n    phaseId\n  }\n}",
+								"query": "query Task($taskId: String) {\n  task(id: $taskId) {\n    id\n    title\n    isDone\n    phase {\n        id\n        title\n        order\n        isDone\n    }\n  }\n}",
 								"variables": "{\n  \"taskId\": \"{{taskId}}\"\n}"
 							}
 						},

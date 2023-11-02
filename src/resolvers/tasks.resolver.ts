@@ -1,7 +1,10 @@
 import { objectType, extendType, stringArg, booleanArg, nonNull } from 'nexus';
 import { TasksService } from '../services/tasks.service';
 import { Void } from '../shared/scalar-types';
+import { PhasesService } from '../services/phases.service';
+
 const tasksService = new TasksService();
+const phasesService = new PhasesService();
 
 const Task = objectType({
   name: 'Task',
@@ -9,7 +12,11 @@ const Task = objectType({
     t.string('id');
     t.string('title');
     t.boolean('isDone');
-    t.string('phaseId');
+
+    t.field('phase', {
+      type: 'Phase',
+      resolve: (parent) => phasesService.find(parent.phaseId)
+    });
   }
 });
 

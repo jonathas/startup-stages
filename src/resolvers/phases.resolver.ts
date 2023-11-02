@@ -3,7 +3,10 @@ import { plainToClass } from 'class-transformer';
 import { PhasesService } from '../services/phases.service';
 import { CreatePhaseInput } from '../dto/phase.dto';
 import { Void } from '../shared/scalar-types';
+import { TasksService } from '../services/tasks.service';
+
 const phasesService = new PhasesService();
+const tasksService = new TasksService();
 
 const Phase = objectType({
   name: 'Phase',
@@ -13,6 +16,15 @@ const Phase = objectType({
     t.string('title');
     t.boolean('isDone', {
       resolve: (parent) => phasesService.isPhaseDone(parent.id)
+    });
+
+    /**
+     * This field resolver would work better with a dataloader if we were using a database,
+     * in order to avoid the N+1 problem.
+     */
+    t.list.field('tasks', {
+      type: 'Task',
+      resolve: (parent) => tasksService.findAllByPhaseId(parent.id)
     });
   }
 });
