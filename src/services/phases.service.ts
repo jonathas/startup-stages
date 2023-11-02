@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { CreatePhaseInput, UpdatePhaseInput } from '../dto/phase.dto';
 import { PhaseModel } from '../models/phase.model';
 import { TaskModel } from '../models/task.model';
-import { UserInputError, ApolloError } from 'apollo-server-errors';
+import { GraphQLError } from 'graphql';
 
 export class PhasesService {
   private phaseModel: PhaseModel;
@@ -24,20 +24,30 @@ export class PhasesService {
   private async validateInput(input: CreatePhaseInput) {
     const errors = await validate(input);
     if (errors.length) {
-      throw new UserInputError('Invalid input data', {
-        invalidArgs: errors
+      throw new GraphQLError('Invalid input data', {
+        extensions: {
+          invalidArgs: errors
+        }
       });
     }
 
     if (input.order && !this.phaseModel.isOrderUnique(input.order)) {
-      throw new UserInputError('Order must be unique');
+      throw new GraphQLError('Order must be unique', {
+        extensions: {
+          code: 'ORDER_NOT_UNIQUE'
+        }
+      });
     }
   }
 
   public find(id: string) {
     const phase = this.phaseModel.find(id);
     if (!phase) {
-      throw new ApolloError('Phase not found', 'NOT_FOUND');
+      throw new GraphQLError('Phase not found', {
+        extensions: {
+          code: 'NOT_FOUND'
+        }
+      });
     }
     return phase;
   }

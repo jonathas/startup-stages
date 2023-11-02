@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
 import { CreateTaskInput, UpdateTaskInput } from '../dto/task.dto';
-import { UserInputError, ApolloError } from 'apollo-server-errors';
+import { GraphQLError } from 'graphql';
 
 export class TasksService {
   private taskModel: TaskModel;
@@ -26,9 +26,7 @@ export class TasksService {
   private async validateInput(phaseId: string, input: CreateTaskInput | UpdateTaskInput) {
     const errors = await validate(input);
     if (errors.length) {
-      throw new UserInputError('Invalid input data', {
-        invalidArgs: errors
-      });
+      throw new GraphQLError('Invalid input data', { extensions: { invalidArgs: errors } });
     }
 
     this.validateStatusChange(phaseId, input);
@@ -39,10 +37,11 @@ export class TasksService {
 
     // Trying to set a task to done when the previous phase is not completed
     if (input.isDone && previousPhase && !this.phasesService.isPhaseDone(previousPhase.id)) {
-      throw new ApolloError(
-        'Tasks from the previous phase are not completed',
-        'PREVIOUS_PHASE_NOT_COMPLETED'
-      );
+      throw new GraphQLError('Tasks from the previous phase are not completed', {
+        extensions: {
+          code: 'PREVIOUS_PHASE_NOT_COMPLETED'
+        }
+      });
     }
 
     // Trying to undo a task in the current phase when any task of next phase is already completed
@@ -51,10 +50,14 @@ export class TasksService {
       nextPhase &&
       this.phasesService.isAtLeastOneItemOfPhaseDone(nextPhase.id)
     ) {
-      throw new ApolloError(
+      throw new GraphQLError(
         `At least one task from the next phase is already completed, ` +
           `so this task cannot be updated to not done`,
-        'NEXT_PHASE_DONE'
+        {
+          extensions: {
+            code: 'NEXT_PHASE_DONE'
+          }
+        }
       );
     }
   }
@@ -62,7 +65,11 @@ export class TasksService {
   public find(id: string) {
     const task = this.taskModel.find(id);
     if (!task) {
-      throw new ApolloError('Task not found', 'NOT_FOUND');
+      throw new GraphQLError('Task not found', {
+        extensions: {
+          code: 'NOT_FOUND'
+        }
+      });
     }
     return task;
   }
