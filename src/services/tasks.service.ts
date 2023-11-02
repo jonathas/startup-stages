@@ -26,7 +26,9 @@ export class TasksService {
   private async validateInput(phaseId: string, input: CreateTaskInput | UpdateTaskInput) {
     const errors = await validate(input);
     if (errors.length) {
-      throw new GraphQLError('Invalid input data', { extensions: { invalidArgs: errors } });
+      throw new GraphQLError('Invalid input data', {
+        extensions: { invalidArgs: errors, code: 'BAD_REQUEST' }
+      });
     }
 
     this.validateStatusChange(phaseId, input);

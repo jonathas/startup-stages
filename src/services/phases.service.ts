@@ -26,7 +26,8 @@ export class PhasesService {
     if (errors.length) {
       throw new GraphQLError('Invalid input data', {
         extensions: {
-          invalidArgs: errors
+          invalidArgs: errors,
+          code: 'BAD_REQUEST'
         }
       });
     }
