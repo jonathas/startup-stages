@@ -5,6 +5,7 @@ import fastifyApollo, { fastifyApolloDrainPlugin } from '@as-integrations/fastif
 import compress from '@fastify/compress';
 import cors from '@fastify/cors';
 import Fastify from 'fastify';
+import * as depthLimit from 'graphql-depth-limit';
 import { schema } from './schema';
 
 dotenv.config();
@@ -14,6 +15,7 @@ const startServer = async () => {
 
   const apollo = new ApolloServer({
     schema,
+    validationRules: [depthLimit(2)],
     plugins: [fastifyApolloDrainPlugin(app)]
   });
 
