@@ -9,7 +9,7 @@ import { schema } from './schema';
 dotenv.config();
 
 const startServer = async () => {
-  const app = await Fastify();
+  const app = await Fastify({ trustProxy: true });
 
   const apollo = new ApolloServer({
     schema,

@@ -59,7 +59,7 @@ export class PhasesService {
   }
 
   public findAll() {
-    return this.phaseModel.findAll();
+    return this.phaseModel.getAllOrderedByOrder();
   }
 
   public isPhaseDone(phaseId: string) {
