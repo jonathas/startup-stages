@@ -22,7 +22,9 @@ describe('# Phases', () => {
   });
 
   afterEach(() => {
-    phasesService.delete(createdPhase.id);
+    if (createdPhase?.id) {
+      phasesService.delete(createdPhase.id);
+    }
   });
 
   it('should be possible to create a phase', async () => {

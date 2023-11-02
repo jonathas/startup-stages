@@ -1,5 +1,6 @@
 import { objectType, extendType, stringArg, booleanArg, nonNull } from 'nexus';
 import { TasksService } from '../services/tasks.service';
+import { Void } from '../shared/scalar-types';
 const tasksService = new TasksService();
 
 const Task = objectType({
@@ -69,7 +70,7 @@ const deleteTask = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('deleteTask', {
-      type: 'Task',
+      type: Void,
       args: {
         id: nonNull(stringArg({ description: 'Id of the task' }))
       },

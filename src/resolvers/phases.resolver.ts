@@ -2,6 +2,7 @@ import { objectType, stringArg, intArg, nonNull, extendType } from 'nexus';
 import { plainToClass } from 'class-transformer';
 import { PhasesService } from '../services/phases.service';
 import { CreatePhaseInput } from '../dto/phase.dto';
+import { Void } from '../shared/scalar-types';
 const phasesService = new PhasesService();
 
 const Phase = objectType({
@@ -69,7 +70,7 @@ const deletePhase = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('deletePhase', {
-      type: 'Phase',
+      type: Void,
       args: {
         id: nonNull(stringArg({ description: 'Id of the phase' }))
       },
