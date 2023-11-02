@@ -31,14 +31,6 @@ export class PhasesService {
         }
       });
     }
-
-    if (input.order && !this.phaseModel.isOrderUnique(input.order)) {
-      throw new GraphQLError('Order must be unique', {
-        extensions: {
-          code: 'ORDER_NOT_UNIQUE'
-        }
-      });
-    }
   }
 
   public find(id: string) {
