@@ -1,10 +1,13 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 
 export class PhaseDTO {
   @IsInt()
+  @IsNotEmpty()
+  @Min(0)
   public order: number;
 
   @IsString()
+  @IsNotEmpty()
   public title: string;
 }
 

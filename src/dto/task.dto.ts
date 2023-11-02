@@ -1,13 +1,15 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class TaskDTO {
   @IsString()
+  @IsNotEmpty()
   public title: string;
 
   @IsBoolean()
   public isDone: boolean;
 
   @IsString()
+  @IsNotEmpty()
   public phaseId: string;
 }
 

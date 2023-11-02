@@ -3,6 +3,7 @@ import { PhaseDTO, UpdatePhaseInput } from '../dto/phase.dto';
 import { PhaseModel } from '../models/phase.model';
 import { TaskModel } from '../models/task.model';
 import { Helpers } from '../helpers/helpers';
+import { UserInputError, ApolloError } from 'apollo-server-errors';
 
 export class PhasesService {
   private phaseModel: PhaseModel;
@@ -20,20 +21,22 @@ export class PhasesService {
   }
 
   private async validateInput(input: PhaseDTO) {
-    const validation = await validate(input);
-    if (validation.length) {
-      throw new Error(`Validation failed. Errors: ${JSON.stringify(validation)}`);
+    const errors = await validate(input);
+    if (errors.length) {
+      throw new UserInputError('Invalid input data', {
+        invalidArgs: errors
+      });
     }
 
     if (input.order && !this.phaseModel.isOrderUnique(input.order)) {
-      throw new Error('Order must be unique');
+      throw new UserInputError('Order must be unique');
     }
   }
 
   public find(id: string) {
     const phase = this.phaseModel.find(id);
     if (!phase) {
-      throw new Error('Phase not found');
+      throw new ApolloError('Phase not found', 'NOT_FOUND');
     }
     return phase;
   }

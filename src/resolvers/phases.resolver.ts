@@ -1,5 +1,7 @@
 import { objectType, stringArg, intArg, nonNull, extendType } from 'nexus';
+import { plainToClass } from 'class-transformer';
 import { PhasesService } from '../services/phases.service';
+import { CreatePhaseInput } from '../dto/phase.dto';
 const phasesService = new PhasesService();
 
 const Phase = objectType({
@@ -43,7 +45,7 @@ const create = extendType({
         title: stringArg({ description: 'Title of the phase' }),
         order: intArg({ description: 'Order of the phase' })
       },
-      resolve: (parent, args) => phasesService.create(args)
+      resolve: (parent, args) => phasesService.create(plainToClass(CreatePhaseInput, args))
     });
   }
 });

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import * as dotenv from 'dotenv';
 import { ApolloServer } from '@apollo/server';
 import fastifyApollo, { fastifyApolloDrainPlugin } from '@as-integrations/fastify';

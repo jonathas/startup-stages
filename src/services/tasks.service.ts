@@ -3,6 +3,7 @@ import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
 import { Helpers } from '../helpers/helpers';
 import { CreateTaskInput, TaskDTO, UpdateTaskInput } from '../dto/task.dto';
+import { UserInputError, ApolloError } from 'apollo-server-errors';
 
 export class TasksService {
   private taskModel: TaskModel;
@@ -15,9 +16,6 @@ export class TasksService {
   }
 
   public async create(input: CreateTaskInput) {
-    if (!input.phaseId) {
-      throw new Error('PhaseId is required');
-    }
     const phase = this.phasesService.find(input.phaseId);
     await this.validateInput(phase.id, input);
 
@@ -25,9 +23,11 @@ export class TasksService {
   }
 
   private async validateInput(phaseId: string, input: TaskDTO) {
-    const validation = await validate(input);
-    if (validation.length) {
-      throw new Error(`Validation failed. Errors: ${JSON.stringify(validation)}`);
+    const errors = await validate(input);
+    if (errors.length) {
+      throw new UserInputError('Invalid input data', {
+        invalidArgs: errors
+      });
     }
 
     this.validateStatusChange(phaseId, input);
@@ -38,19 +38,22 @@ export class TasksService {
 
     // Trying to set a task to done when the previous phase is not completed
     if (input.isDone && previousPhase && !this.phasesService.isPhaseDone(previousPhase.id)) {
-      throw new Error('Tasks from the previous phase are not completed');
+      throw new ApolloError(
+        'Tasks from the previous phase are not completed',
+        'PREVIOUS_PHASE_NOT_COMPLETED'
+      );
     }
 
     // Trying to undo a task in the current phase when the next phase is already completed
     if (!input.isDone && nextPhase && this.phasesService.isPhaseDone(nextPhase.id)) {
-      throw new Error('Tasks from the next phase are already completed');
+      throw new ApolloError('Tasks from the next phase are already completed', 'NEXT_PHASE_DONE');
     }
   }
 
   public find(id: string) {
     const task = this.taskModel.find(id);
     if (!task) {
-      throw new Error('Task not found');
+      throw new ApolloError('Task not found', 'NOT_FOUND');
     }
     return task;
   }
