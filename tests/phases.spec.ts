@@ -41,9 +41,9 @@ describe('# Phases', () => {
     await expect(() => phasesService.create(phase)).rejects.toThrow('Order must be unique');
   });
 
-  it('should be possible to find a phase', async () => {
+  it('should be possible to get a phase', async () => {
     createdPhase = await phasesService.create(phase);
-    const found = phasesService.find(createdPhase.id);
+    const found = phasesService.getOne(createdPhase.id);
 
     expect(found).not.toBeUndefined();
     expect(found.id).toBe(createdPhase.id);
@@ -66,11 +66,11 @@ describe('# Phases', () => {
     ).rejects.toThrow('Phase not found');
   });
 
-  it('should be possible to find all phases', async () => {
+  it('should be possible to get all phases', async () => {
     createdPhase = await phasesService.create(phase);
     const phase2 = await phasesService.create(newPhase);
 
-    expect(phasesService.findAll().length).toBe(2);
+    expect(phasesService.getAll().length).toBe(2);
 
     phasesService.delete(phase2.id);
   });
@@ -79,7 +79,7 @@ describe('# Phases', () => {
     const res = await phasesService.create(phase);
     phasesService.delete(res.id);
 
-    expect(phasesService.findAll().length).toBe(0);
+    expect(phasesService.getAll().length).toBe(0);
   });
 
   it('should be considered as done when all tasks are done', async () => {
@@ -126,7 +126,7 @@ describe('# Phases', () => {
 
     phasesService.delete(createdPhase.id);
 
-    expect(tasksService.findAll().length).toBe(0);
+    expect(tasksService.getAll().length).toBe(0);
 
     tasksService.delete(taskModel.id);
     tasksService.delete(taskModel2.id);

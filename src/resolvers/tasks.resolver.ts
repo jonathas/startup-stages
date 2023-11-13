@@ -15,22 +15,22 @@ const Task = objectType({
 
     t.field('phase', {
       type: 'Phase',
-      resolve: (parent) => phasesService.find(parent.phaseId)
+      resolve: (parent) => phasesService.getOne(parent.phaseId)
     });
   }
 });
 
-const findAll = extendType({
+const getAll = extendType({
   type: 'Query',
   definition(t) {
     t.list.field('tasks', {
       type: 'Task',
-      resolve: () => tasksService.findAll()
+      resolve: () => tasksService.getAll()
     });
   }
 });
 
-const find = extendType({
+const getOne = extendType({
   type: 'Query',
   definition(t) {
     t.field('task', {
@@ -38,7 +38,7 @@ const find = extendType({
       args: {
         id: stringArg({ description: 'Id of the task' })
       },
-      resolve: (parent, { id }) => tasksService.find(id)
+      resolve: (parent, { id }) => tasksService.getOne(id)
     });
   }
 });
@@ -86,4 +86,4 @@ const deleteTask = extendType({
   }
 });
 
-export { Task, findAll, find, create, update, deleteTask };
+export { Task, getAll, getOne, create, update, deleteTask };

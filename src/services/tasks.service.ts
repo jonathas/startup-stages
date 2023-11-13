@@ -18,7 +18,7 @@ export class TasksService {
 
   public async create(input: CreateTaskInput) {
     input = plainToInstance(CreateTaskInput, input);
-    const phase = this.phasesService.find(input.phaseId);
+    const phase = this.phasesService.getOne(input.phaseId);
     await this.validateInput(phase.id, input);
 
     return this.taskModel.create({ ...input, phaseId: phase.id });
@@ -65,8 +65,8 @@ export class TasksService {
     }
   }
 
-  public find(id: string) {
-    const task = this.taskModel.find(id);
+  public getOne(id: string) {
+    const task = this.taskModel.get(id);
     if (!task) {
       throw new GraphQLError('Task not found', {
         extensions: {
@@ -79,7 +79,7 @@ export class TasksService {
 
   public async update(input: UpdateTaskInput) {
     input = plainToInstance(UpdateTaskInput, input);
-    const task = this.find(input.id);
+    const task = this.getOne(input.id);
     await this.validateInput(task.phaseId, input);
 
     const data = { ...task, ...input } as TaskModel;
@@ -92,11 +92,11 @@ export class TasksService {
     this.taskModel.delete(id);
   }
 
-  public findAll() {
-    return this.taskModel.findAll();
+  public getAll() {
+    return this.taskModel.getAll();
   }
 
-  public findAllByPhaseId(phaseId: string) {
-    return this.taskModel.findAllByPhaseId(phaseId);
+  public getAllByPhaseId(phaseId: string) {
+    return this.taskModel.getAllByPhaseId(phaseId);
   }
 }

@@ -15,11 +15,11 @@ export class Model<T> {
     this.title = title;
   }
 
-  public find(id: string): T | undefined {
+  public get(id: string): T | undefined {
     return this.collection.get(id);
   }
 
-  public findAll() {
+  public getAll() {
     return Array.from(this.collection.values());
   }
 

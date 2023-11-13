@@ -42,8 +42,8 @@ export class PhasesService {
     }
   }
 
-  public find(id: string) {
-    const phase = this.phaseModel.find(id);
+  public getOne(id: string) {
+    const phase = this.phaseModel.get(id);
     if (!phase) {
       throw new GraphQLError('Phase not found', {
         extensions: {
@@ -58,7 +58,7 @@ export class PhasesService {
     input = plainToInstance(UpdatePhaseInput, input);
     await this.validateInput(input);
 
-    const phase = this.find(input.id);
+    const phase = this.getOne(input.id);
 
     const data = { ...phase, ...input } as PhaseModel;
     this.phaseModel.update(input.id, data);
@@ -67,18 +67,18 @@ export class PhasesService {
   }
 
   public delete(id: string) {
-    const tasks = this.taskModel.findAllByPhaseId(id);
+    const tasks = this.taskModel.getAllByPhaseId(id);
     tasks.forEach((task) => this.taskModel.delete(task.id));
 
     this.phaseModel.delete(id);
   }
 
-  public findAll() {
+  public getAll() {
     return this.phaseModel.getAllOrderedByOrder();
   }
 
   public isPhaseDone(phaseId: string) {
-    const tasks = this.taskModel.findAllByPhaseId(phaseId);
+    const tasks = this.taskModel.getAllByPhaseId(phaseId);
     if (!tasks?.length) {
       return false;
     }
@@ -86,7 +86,7 @@ export class PhasesService {
   }
 
   public isAtLeastOneItemOfPhaseDone(phaseId: string) {
-    const tasks = this.taskModel.findAllByPhaseId(phaseId);
+    const tasks = this.taskModel.getAllByPhaseId(phaseId);
     if (!tasks?.length) {
       return false;
     }
