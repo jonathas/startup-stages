@@ -1,7 +1,9 @@
 import { objectType, extendType, stringArg, booleanArg, nonNull } from 'nexus';
+import { plainToInstance } from 'class-transformer';
 import { TasksService } from '../services/tasks.service';
 import { Void } from '../shared/scalar-types';
 import { PhasesService } from '../services/phases.service';
+import { CreateTaskInput, UpdateTaskInput } from '../dto/task.dto';
 
 const tasksService = new TasksService();
 const phasesService = new PhasesService();
@@ -53,7 +55,7 @@ const create = extendType({
         phaseId: nonNull(stringArg({ description: 'Id of the phase' })),
         isDone: nonNull(booleanArg({ description: 'Is the task done?' }))
       },
-      resolve: (parent, args) => tasksService.create(args)
+      resolve: (parent, args) => tasksService.create(plainToInstance(CreateTaskInput, args))
     });
   }
 });
@@ -68,7 +70,7 @@ const update = extendType({
         title: stringArg({ description: 'Title of the task' }),
         isDone: booleanArg({ description: 'Is the task done?' })
       },
-      resolve: (parent, args) => tasksService.update(args)
+      resolve: (parent, args) => tasksService.update(plainToInstance(UpdateTaskInput, args))
     });
   }
 });

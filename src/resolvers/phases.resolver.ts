@@ -1,7 +1,9 @@
 import { objectType, stringArg, intArg, nonNull, extendType } from 'nexus';
+import { plainToInstance } from 'class-transformer';
 import { PhasesService } from '../services/phases.service';
 import { Void } from '../shared/scalar-types';
 import { TasksService } from '../services/tasks.service';
+import { CreatePhaseInput, UpdatePhaseInput } from '../dto/phase.dto';
 
 const phasesService = new PhasesService();
 const tasksService = new TasksService();
@@ -59,7 +61,7 @@ const create = extendType({
         title: stringArg({ description: 'Title of the phase' }),
         order: intArg({ description: 'Order of the phase' })
       },
-      resolve: (parent, args) => phasesService.create(args)
+      resolve: (parent, args) => phasesService.create(plainToInstance(CreatePhaseInput, args))
     });
   }
 });
@@ -74,7 +76,7 @@ const update = extendType({
         title: stringArg({ description: 'Title of the phase' }),
         order: intArg({ description: 'Order of the phase' })
       },
-      resolve: (parent, args) => phasesService.update(args)
+      resolve: (parent, args) => phasesService.update(plainToInstance(UpdatePhaseInput, args))
     });
   }
 });

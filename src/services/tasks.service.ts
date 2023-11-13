@@ -1,5 +1,4 @@
 import { validate } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
 import { CreateTaskInput, UpdateTaskInput } from '../dto/task.dto';
@@ -17,7 +16,6 @@ export class TasksService {
   }
 
   public async create(input: CreateTaskInput) {
-    input = plainToInstance(CreateTaskInput, input);
     const phase = this.phasesService.getOne(input.phaseId);
     await this.validateInput(phase.id, input);
 
@@ -78,7 +76,6 @@ export class TasksService {
   }
 
   public async update(input: UpdateTaskInput) {
-    input = plainToInstance(UpdateTaskInput, input);
     const task = this.getOne(input.id);
     await this.validateInput(task.phaseId, input);
 
