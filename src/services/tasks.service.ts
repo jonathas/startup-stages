@@ -4,6 +4,7 @@ import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
 import { CreateTaskInput, UpdateTaskInput } from '../dto/task.dto';
 import { GraphQLError } from 'graphql';
+import { ErrorCode } from '../shared/error-codes.enum';
 
 export class TasksService {
   private taskModel: TaskModel;
@@ -27,7 +28,7 @@ export class TasksService {
     const errors = await validate(input);
     if (errors.length) {
       throw new GraphQLError('Invalid input data', {
-        extensions: { invalidArgs: errors, code: 'BAD_REQUEST' }
+        extensions: { invalidArgs: errors, code: ErrorCode.BAD_REQUEST }
       });
     }
 
@@ -41,7 +42,7 @@ export class TasksService {
     if (input.isDone && previousPhase && !this.phasesService.isPhaseDone(previousPhase.id)) {
       throw new GraphQLError('Tasks from the previous phase are not completed', {
         extensions: {
-          code: 'PREVIOUS_PHASE_NOT_COMPLETED'
+          code: ErrorCode.PREVIOUS_PHASE_NOT_COMPLETED
         }
       });
     }
@@ -57,7 +58,7 @@ export class TasksService {
           `so this task cannot be updated to not done`,
         {
           extensions: {
-            code: 'NEXT_PHASE_DONE'
+            code: ErrorCode.NEXT_PHASE_DONE
           }
         }
       );
@@ -69,7 +70,7 @@ export class TasksService {
     if (!task) {
       throw new GraphQLError('Task not found', {
         extensions: {
-          code: 'NOT_FOUND'
+          code: ErrorCode.NOT_FOUND
         }
       });
     }

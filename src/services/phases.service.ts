@@ -4,6 +4,7 @@ import { CreatePhaseInput, UpdatePhaseInput } from '../dto/phase.dto';
 import { PhaseModel } from '../models/phase.model';
 import { TaskModel } from '../models/task.model';
 import { GraphQLError } from 'graphql';
+import { ErrorCode } from '../shared/error-codes.enum';
 
 export class PhasesService {
   private phaseModel: PhaseModel;
@@ -27,7 +28,7 @@ export class PhasesService {
       throw new GraphQLError('Invalid input data', {
         extensions: {
           invalidArgs: errors,
-          code: 'BAD_REQUEST'
+          code: ErrorCode.BAD_REQUEST
         }
       });
     }
@@ -35,7 +36,7 @@ export class PhasesService {
     if (input.order && !this.phaseModel.isOrderUnique(input.order)) {
       throw new GraphQLError('Order must be unique', {
         extensions: {
-          code: 'ORDER_NOT_UNIQUE'
+          code: ErrorCode.ORDER_NOT_UNIQUE
         }
       });
     }
@@ -46,7 +47,7 @@ export class PhasesService {
     if (!phase) {
       throw new GraphQLError('Phase not found', {
         extensions: {
-          code: 'NOT_FOUND'
+          code: ErrorCode.NOT_FOUND
         }
       });
     }
