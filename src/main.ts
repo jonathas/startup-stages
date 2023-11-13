@@ -27,7 +27,7 @@ const startServer = async () => {
   await app.register(fastifyApollo(apollo));
 
   return app.listen({
-    port: parseInt(process.env.PORT || '3000')
+    port: parseInt(process.env.PORT) || 3000
   });
 };
 

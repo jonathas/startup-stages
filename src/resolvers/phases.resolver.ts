@@ -1,7 +1,9 @@
 import { objectType, stringArg, intArg, nonNull, extendType } from 'nexus';
+import { plainToInstance } from 'class-transformer';
 import { PhasesService } from '../services/phases.service';
 import { Void } from '../shared/scalar-types';
 import { TasksService } from '../services/tasks.service';
+import { CreatePhaseInput, UpdatePhaseInput } from '../dto/phase.dto';
 
 const phasesService = new PhasesService();
 const tasksService = new TasksService();
@@ -22,22 +24,22 @@ const Phase = objectType({
      */
     t.list.field('tasks', {
       type: 'Task',
-      resolve: (parent) => tasksService.findAllByPhaseId(parent.id)
+      resolve: (parent) => tasksService.getAllByPhaseId(parent.id)
     });
   }
 });
 
-const findAll = extendType({
+const getAll = extendType({
   type: 'Query',
   definition(t) {
     t.list.field('phases', {
       type: 'Phase',
-      resolve: () => phasesService.findAll()
+      resolve: () => phasesService.getAll()
     });
   }
 });
 
-const find = extendType({
+const getOne = extendType({
   type: 'Query',
   definition(t) {
     t.field('phase', {
@@ -45,7 +47,7 @@ const find = extendType({
       args: {
         id: stringArg({ description: 'Id of the phase' })
       },
-      resolve: (parent, { id }) => phasesService.find(id)
+      resolve: (parent, { id }) => phasesService.getOne(id)
     });
   }
 });
@@ -59,7 +61,7 @@ const create = extendType({
         title: stringArg({ description: 'Title of the phase' }),
         order: intArg({ description: 'Order of the phase' })
       },
-      resolve: (parent, args) => phasesService.create(args)
+      resolve: (parent, args) => phasesService.create(plainToInstance(CreatePhaseInput, args))
     });
   }
 });
@@ -74,7 +76,7 @@ const update = extendType({
         title: stringArg({ description: 'Title of the phase' }),
         order: intArg({ description: 'Order of the phase' })
       },
-      resolve: (parent, args) => phasesService.update(args)
+      resolve: (parent, args) => phasesService.update(plainToInstance(UpdatePhaseInput, args))
     });
   }
 });
@@ -92,4 +94,4 @@ const deletePhase = extendType({
   }
 });
 
-export { Phase, findAll, find, create, update, deletePhase };
+export { Phase, getAll, getOne, create, update, deletePhase };

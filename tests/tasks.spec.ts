@@ -60,12 +60,12 @@ describe('# Tasks', () => {
     );
   });
 
-  it('should be possible to find a task', async () => {
+  it('should be possible to get a task', async () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
     createdTasks.push(await tasksService.create(task as CreateTaskInput));
-    const found = tasksService.find(createdTasks[0].id);
+    const found = tasksService.getOne(createdTasks[0].id);
 
     expect(found).not.toBeUndefined();
     expect(found.id).toBe(createdTasks[0].id);
@@ -97,7 +97,7 @@ describe('# Tasks', () => {
     ).rejects.toThrow('Task not found');
   });
 
-  it('should be possible to find all tasks', async () => {
+  it('should be possible to get all tasks', async () => {
     createdPhases.push(await phasesService.create(phase));
     task.phaseId = createdPhases[0].id;
 
@@ -106,7 +106,7 @@ describe('# Tasks', () => {
       ...newTask,
       phaseId: createdPhases[0].id
     } as CreateTaskInput);
-    const found = tasksService.findAll();
+    const found = tasksService.getAll();
 
     expect(found).not.toBeUndefined();
     expect(found).toHaveLength(2);
@@ -125,7 +125,7 @@ describe('# Tasks', () => {
     const res = await tasksService.create(task as CreateTaskInput);
     tasksService.delete(res.id);
 
-    expect(() => tasksService.find(res.id)).toThrow('Task not found');
+    expect(() => tasksService.getOne(res.id)).toThrow('Task not found');
   });
 
   it('should not complete a task if any task in the previous phase is not completed', async () => {

@@ -1,7 +1,9 @@
 import { objectType, extendType, stringArg, booleanArg, nonNull } from 'nexus';
+import { plainToInstance } from 'class-transformer';
 import { TasksService } from '../services/tasks.service';
 import { Void } from '../shared/scalar-types';
 import { PhasesService } from '../services/phases.service';
+import { CreateTaskInput, UpdateTaskInput } from '../dto/task.dto';
 
 const tasksService = new TasksService();
 const phasesService = new PhasesService();
@@ -15,22 +17,22 @@ const Task = objectType({
 
     t.field('phase', {
       type: 'Phase',
-      resolve: (parent) => phasesService.find(parent.phaseId)
+      resolve: (parent) => phasesService.getOne(parent.phaseId)
     });
   }
 });
 
-const findAll = extendType({
+const getAll = extendType({
   type: 'Query',
   definition(t) {
     t.list.field('tasks', {
       type: 'Task',
-      resolve: () => tasksService.findAll()
+      resolve: () => tasksService.getAll()
     });
   }
 });
 
-const find = extendType({
+const getOne = extendType({
   type: 'Query',
   definition(t) {
     t.field('task', {
@@ -38,7 +40,7 @@ const find = extendType({
       args: {
         id: stringArg({ description: 'Id of the task' })
       },
-      resolve: (parent, { id }) => tasksService.find(id)
+      resolve: (parent, { id }) => tasksService.getOne(id)
     });
   }
 });
@@ -53,7 +55,7 @@ const create = extendType({
         phaseId: nonNull(stringArg({ description: 'Id of the phase' })),
         isDone: nonNull(booleanArg({ description: 'Is the task done?' }))
       },
-      resolve: (parent, args) => tasksService.create(args)
+      resolve: (parent, args) => tasksService.create(plainToInstance(CreateTaskInput, args))
     });
   }
 });
@@ -68,7 +70,7 @@ const update = extendType({
         title: stringArg({ description: 'Title of the task' }),
         isDone: booleanArg({ description: 'Is the task done?' })
       },
-      resolve: (parent, args) => tasksService.update(args)
+      resolve: (parent, args) => tasksService.update(plainToInstance(UpdateTaskInput, args))
     });
   }
 });
@@ -86,4 +88,4 @@ const deleteTask = extendType({
   }
 });
 
-export { Task, findAll, find, create, update, deleteTask };
+export { Task, getAll, getOne, create, update, deleteTask };

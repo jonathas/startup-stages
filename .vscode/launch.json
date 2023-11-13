@@ -24,6 +24,17 @@
       "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**/*.js"]
     },
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug running via nodemon",
+      "runtimeExecutable": "nodemon",
+      "program": "${workspaceFolder}/src/main.t",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**/*.js"]
+    },
+    {
       "name": "Debug TS file",
       "type": "node",
       "request": "launch",

@@ -1,9 +1,9 @@
 import { validate } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 import { TaskModel } from '../models/task.model';
 import { PhasesService } from './phases.service';
 import { CreateTaskInput, UpdateTaskInput } from '../dto/task.dto';
 import { GraphQLError } from 'graphql';
+import { ErrorCode } from '../shared/error-codes.enum';
 
 export class TasksService {
   private taskModel: TaskModel;
@@ -16,8 +16,7 @@ export class TasksService {
   }
 
   public async create(input: CreateTaskInput) {
-    input = plainToInstance(CreateTaskInput, input);
-    const phase = this.phasesService.find(input.phaseId);
+    const phase = this.phasesService.getOne(input.phaseId);
     await this.validateInput(phase.id, input);
 
     return this.taskModel.create({ ...input, phaseId: phase.id });
@@ -27,7 +26,7 @@ export class TasksService {
     const errors = await validate(input);
     if (errors.length) {
       throw new GraphQLError('Invalid input data', {
-        extensions: { invalidArgs: errors, code: 'BAD_REQUEST' }
+        extensions: { invalidArgs: errors, code: ErrorCode.BAD_REQUEST }
       });
     }
 
@@ -41,7 +40,7 @@ export class TasksService {
     if (input.isDone && previousPhase && !this.phasesService.isPhaseDone(previousPhase.id)) {
       throw new GraphQLError('Tasks from the previous phase are not completed', {
         extensions: {
-          code: 'PREVIOUS_PHASE_NOT_COMPLETED'
+          code: ErrorCode.PREVIOUS_PHASE_NOT_COMPLETED
         }
       });
     }
@@ -57,19 +56,19 @@ export class TasksService {
           `so this task cannot be updated to not done`,
         {
           extensions: {
-            code: 'NEXT_PHASE_DONE'
+            code: ErrorCode.NEXT_PHASE_DONE
           }
         }
       );
     }
   }
 
-  public find(id: string) {
-    const task = this.taskModel.find(id);
+  public getOne(id: string) {
+    const task = this.taskModel.get(id);
     if (!task) {
       throw new GraphQLError('Task not found', {
         extensions: {
-          code: 'NOT_FOUND'
+          code: ErrorCode.NOT_FOUND
         }
       });
     }
@@ -77,8 +76,7 @@ export class TasksService {
   }
 
   public async update(input: UpdateTaskInput) {
-    input = plainToInstance(UpdateTaskInput, input);
-    const task = this.find(input.id);
+    const task = this.getOne(input.id);
     await this.validateInput(task.phaseId, input);
 
     const data = { ...task, ...input } as TaskModel;
@@ -91,11 +89,11 @@ export class TasksService {
     this.taskModel.delete(id);
   }
 
-  public findAll() {
-    return this.taskModel.findAll();
+  public getAll() {
+    return this.taskModel.getAll();
   }
 
-  public findAllByPhaseId(phaseId: string) {
-    return this.taskModel.findAllByPhaseId(phaseId);
+  public getAllByPhaseId(phaseId: string) {
+    return this.taskModel.getAllByPhaseId(phaseId);
   }
 }
